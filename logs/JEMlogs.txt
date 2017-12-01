@@ -2,7 +2,7 @@
       name:  jemlog
        log:  /Users/billy/Desktop/Articles/JEM/src/logs/JEMlogs.txt
   log type:  text
- opened on:  30 Nov 2017, 23:13:09
+ opened on:  30 Nov 2017, 23:22:45
 
 . 
 . import excel using ../data/raw.xlsx, clear first case(l)
@@ -321,15 +321,16 @@ delimiter now cr
   3. }
 
 . 
-. estout m(raters) using results/tables.rtf, mlabels(, none)                                       ///   
+. estout m(raters) using results/table1.rtf, mlabels(, none)                                       ///   
 > ti("Table 1. Average and Standard Deviation of Raters' Ratings") replace
-(note: file results/tables.rtf not found)
-(output written to results/tables.rtf)
+(note: file results/table1.rtf not found)
+(output written to results/table1.rtf)
 
 . 
-. estout m(items) using results/tables.rtf, mlabels(, none)                                        ///   
-> ti("Table 2. Average and Standard Deviation of Item Ratings") append
-(output written to results/tables.rtf)
+. estout m(items) using results/table2.rtf, mlabels(, none)                                        ///   
+> ti("Table 2. Average and Standard Deviation of Item Ratings") replace
+(note: file results/table2.rtf not found)
+(output written to results/table2.rtf)
 
 . 
 . di _n "Score Summary Statistics"
@@ -385,25 +386,12 @@ Total        |
          max |        13 
 
 . 
-. esttab ., main(score) unstack wide mlabels("Instructors", noti) nonum            ///   
+. esttab . using results/table3.rtf, main(score) unstack wide mlabels("Instructors", noti) nonum           ///   
 > ren(count "# of Students" mean "Average Score" sd "Standard Deviation"           ///   
 > min Minimum p25 "25th %ile" p50 Median p75 "75th %ile" max Maximum) noobs        ///   
-> ti("Table 3.  Summary of Observed Scores Within and Between Instructors") nonote
-
-Table 3.  Summary of Observed Scores Within and Between Instructors
---------------------------------------------------------------------------------------------------------------------------------
-              Instructors                                                                                                       
-                        1                            2                            3                        Total                
---------------------------------------------------------------------------------------------------------------------------------
-# of Stude~s           17                           29                            8                           54                
-Average Sc~e        5.412                        6.172                        5.500                        5.833                
-Standard D~n        1.502                        2.916                        2.390                        2.463                
-Minimum                 3                            2                            3                            2                
-25th %ile               4                            4                            4                            4                
-Median                  5                            6                            4                            5                
-75th %ile               6                            8                            8                            8                
-Maximum                 8                           13                            9                           13                
---------------------------------------------------------------------------------------------------------------------------------
+> ti("Table 3.  Summary of Observed Scores Within and Between Instructors") nonote replace
+(note: file results/table3.rtf not found)
+(output written to results/table3.rtf)
 
 . 
 . di _n "Within Instructor Comparison of Angoff and Contrasting Groups Classifications"
@@ -412,79 +400,129 @@ Within Instructor Comparison of Angoff and Contrasting Groups Classifications
 
 . 
 . forv i = 1/3 {
-  2.         ta contgrpf angoffpf if tchid == `i', exact
-  3. }
-
- Pass/Fail |
- Indicator |
-   Derived |
-      from |  Pass/Fail Indicator
-Contrastin | Derived using Angoff
-  g Groups |       Threshold
-  Cutscore |      Fail       Pass |     Total
------------+----------------------+----------
-      Fail |         9          0 |         9 
-      Pass |         4          4 |         8 
------------+----------------------+----------
-     Total |        13          4 |        17 
+  2.         estpost ta contgrpf angoffpf if tchid == `i', exact elabels
+  3.         
+.         esttab . using results/table`= 3 + `i''.rtf, cells(b) unstack varlabels(`e(labels)') eqlabels(`e(eqlabels)') collabel(, no
+> ne) mlabel("Pass/Fail Derived from Angoff Cutscore") stats(p_exact, labels("Fisher Exact Test")) replace ti("Table . Contrasting G
+> roups vs Angoff Classifications for Students in Instructor `i''s class.")
+  4.         
+. }
 
            Fisher's exact =                 0.029
    1-sided Fisher's exact =                 0.029
 
- Pass/Fail |
- Indicator |
-   Derived |
-      from |  Pass/Fail Indicator
-Contrastin | Derived using Angoff
-  g Groups |       Threshold
-  Cutscore |      Fail       Pass |     Total
------------+----------------------+----------
-      Fail |        14          0 |        14 
-      Pass |         2         13 |        15 
------------+----------------------+----------
-     Total |        16         13 |        29 
+angoffpf     |                                            
+    contgrpf |      e(b)     e(pct)  e(colpct)  e(rowpct) 
+-------------+--------------------------------------------
+0            |                                            
+           0 |         9   52.94118   69.23077        100 
+           1 |         4   23.52941   30.76923         50 
+       Total |        13   76.47059        100   76.47059 
+-------------+--------------------------------------------
+1            |                                            
+           0 |         0          0          0          0 
+           1 |         4   23.52941        100         50 
+       Total |         4   23.52941        100   23.52941 
+-------------+--------------------------------------------
+Total        |                                            
+           0 |         9   52.94118   52.94118        100 
+           1 |         8   47.05882   47.05882        100 
+       Total |        17        100        100        100 
+
+row labels saved in macro e(labels)
+column labels saved in macro e(eqlabels)
+(note: file results/table4.rtf not found)
+(output written to results/table4.rtf)
 
            Fisher's exact =                 0.000
    1-sided Fisher's exact =                 0.000
 
- Pass/Fail |
- Indicator |
-   Derived |
-      from |  Pass/Fail Indicator
-Contrastin | Derived using Angoff
-  g Groups |       Threshold
-  Cutscore |      Fail       Pass |     Total
------------+----------------------+----------
-      Fail |         5          0 |         5 
-      Pass |         0          3 |         3 
------------+----------------------+----------
-     Total |         5          3 |         8 
+angoffpf     |                                            
+    contgrpf |      e(b)     e(pct)  e(colpct)  e(rowpct) 
+-------------+--------------------------------------------
+0            |                                            
+           0 |        14   48.27586       87.5        100 
+           1 |         2   6.896552       12.5   13.33333 
+       Total |        16   55.17241        100   55.17241 
+-------------+--------------------------------------------
+1            |                                            
+           0 |         0          0          0          0 
+           1 |        13   44.82759        100   86.66667 
+       Total |        13   44.82759        100   44.82759 
+-------------+--------------------------------------------
+Total        |                                            
+           0 |        14   48.27586   48.27586        100 
+           1 |        15   51.72414   51.72414        100 
+       Total |        29        100        100        100 
+
+row labels saved in macro e(labels)
+column labels saved in macro e(eqlabels)
+(note: file results/table5.rtf not found)
+(output written to results/table5.rtf)
 
            Fisher's exact =                 0.018
    1-sided Fisher's exact =                 0.018
+
+angoffpf     |                                            
+    contgrpf |      e(b)     e(pct)  e(colpct)  e(rowpct) 
+-------------+--------------------------------------------
+0            |                                            
+           0 |         5       62.5        100        100 
+           1 |         0          0          0          0 
+       Total |         5       62.5        100       62.5 
+-------------+--------------------------------------------
+1            |                                            
+           0 |         0          0          0          0 
+           1 |         3       37.5        100        100 
+       Total |         3       37.5        100       37.5 
+-------------+--------------------------------------------
+Total        |                                            
+           0 |         5       62.5       62.5        100 
+           1 |         3       37.5       37.5        100 
+       Total |         8        100        100        100 
+
+row labels saved in macro e(labels)
+column labels saved in macro e(eqlabels)
+(note: file results/table6.rtf not found)
+(output written to results/table6.rtf)
 
 . 
 . di _n "Between Instructor Comparison of Angoff and Contrasting Groups Classifications"
 
 Between Instructor Comparison of Angoff and Contrasting Groups Classifications
 
-. ta contgrpf angoffpf, exact     
-
- Pass/Fail |
- Indicator |
-   Derived |
-      from |  Pass/Fail Indicator
-Contrastin | Derived using Angoff
-  g Groups |       Threshold
-  Cutscore |      Fail       Pass |     Total
------------+----------------------+----------
-      Fail |        28          0 |        28 
-      Pass |         6         20 |        26 
------------+----------------------+----------
-     Total |        34         20 |        54 
+. estpost ta contgrpf angoffpf, exact elabels
 
            Fisher's exact =                 0.000
    1-sided Fisher's exact =                 0.000
+
+angoffpf     |                                            
+    contgrpf |      e(b)     e(pct)  e(colpct)  e(rowpct) 
+-------------+--------------------------------------------
+0            |                                            
+           0 |        28   51.85185   82.35294        100 
+           1 |         6   11.11111   17.64706   23.07692 
+       Total |        34   62.96296        100   62.96296 
+-------------+--------------------------------------------
+1            |                                            
+           0 |         0          0          0          0 
+           1 |        20   37.03704        100   76.92308 
+       Total |        20   37.03704        100   37.03704 
+-------------+--------------------------------------------
+Total        |                                            
+           0 |        28   51.85185   51.85185        100 
+           1 |        26   48.14815   48.14815        100 
+       Total |        54        100        100        100 
+
+row labels saved in macro e(labels)
+column labels saved in macro e(eqlabels)
+
+. 
+. esttab . using results/table7.rtf, cells(b) unstack varlabels(`e(labels)') eqlabels(`e(eqlabels)') collabel(, none) mlabel("Pass/F
+> ail Derived from Angoff Cutscore") stats(p_exact, labels("Fisher Exact Test")) replace ti("Table . Contrasting Groups vs Angoff Cl
+> assifications for All Students.")
+(note: file results/table7.rtf not found)
+(output written to results/table7.rtf)
 
 . 
 . di _n "Correlation of Contrasting Groups and Angoff Cut Scores and Predicted Pass/Fail"
@@ -526,10 +564,11 @@ Log likelihood = -33.125632                     Pseudo R2         =     0.0868
        _cons |  -1.529436   .8158259    -1.87   0.061    -3.128426    .0695532
 ------------------------------------------------------------------------------
 
-. esttab . using results/tables.rtf, label cells("b(star) se(par)") nonum          ///   
+. esttab . using results/table8.rtf, label cells("b(star) se(par)") nonum          ///   
 > ti("Table .  Logistic Regression of Predicted Pass/Fail on Observed Test Scores") ///   
-> append
-(output written to results/tables.rtf)
+> replace
+(note: file results/table8.rtf not found)
+(output written to results/table8.rtf)
 
 . 
 . margins, at(score=(0(1)15)) post
@@ -595,22 +634,11 @@ Expression   : Pr(pred), predict()
 ------------------------------------------------------------------------------
 
 . 
-. esttab . using results/tables.rtf, cells(b(star) se(par)) rename(1._at 1 2._at 2 3._at 3 4._at 4 5._at 5 6._at 6 7._at 7 8._at 8 9
+. esttab . using results/table9.rtf, cells(b(star) se(par)) rename(1._at 1 2._at 2 3._at 3 4._at 4 5._at 5 6._at 6 7._at 7 8._at 8 9
 > ._at 9 10._at 10 11._at 11 12._at 12 13._at 13 14._at 14 15._at 15 16._at 16) nonum mti("Marginal Effects") collabel(, none) noobs
->  note("Standard Errors in Parentheses") ti("Table .  Predicted Probabilities by Observed Score")
-file results/tables.rtf already exists
-r(602);
-
-end of do-file
-
-r(602);
-
-. do "/var/folders/px/cg4_66j52pvfn2z7pbjvb5d80000gn/T//SD01075.000000"
-
-. esttab . using results/tables.rtf, cells(b(star) se(par)) rename(1._at 1 2._at 2 3._at 3 4._at 4 5._at 5 6._at 6 7._at 7 8._at 8 9
-> ._at 9 10._at 10 11._at 11 12._at 12 13._at 13 14._at 14 15._at 15 16._at 16) nonum mti("Marginal Effects") collabel(, none) noobs
->  note("Standard Errors in Parentheses") ti("Table .  Predicted Probabilities by Observed Score") append
-(output written to results/tables.rtf)
+>  note("Standard Errors in Parentheses") ti("Table .  Predicted Probabilities by Observed Score") replace
+(note: file results/table9.rtf not found)
+(output written to results/table9.rtf)
 
 . 
 . marginsplot, recastci(rarea) ylab(0(0.1)1, angle(0) nogrid) yti("Pr(Pass)", c(black) size(small)) graphr(ic(white) fc(white) lc(wh
@@ -629,5 +657,5 @@ r(602);
       name:  jemlog
        log:  /Users/billy/Desktop/Articles/JEM/src/logs/JEMlogs.txt
   log type:  text
- closed on:  30 Nov 2017, 23:13:53
+ closed on:  30 Nov 2017, 23:22:58
 ------------------------------------------------------------------------------------------------------------------------------------

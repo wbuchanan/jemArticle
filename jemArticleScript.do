@@ -212,40 +212,45 @@ foreach v in contrastingGroup angoff methodcombo {
 	qui: gr export graphs/`v'.pdf, as(pdf) name(`v') replace
 }
 
-estout m(raters) using results/tables.rtf, mlabels(, none)					 ///   
+estout m(raters) using results/table1.rtf, mlabels(, none)					 ///   
 ti("Table 1. Average and Standard Deviation of Raters' Ratings") replace
 
-estout m(items) using results/tables.rtf, mlabels(, none)					 ///   
-ti("Table 2. Average and Standard Deviation of Item Ratings") append
+estout m(items) using results/table2.rtf, mlabels(, none)					 ///   
+ti("Table 2. Average and Standard Deviation of Item Ratings") replace
 
 di _n "Score Summary Statistics"
 estpost tabstat score, by(tchid) c(v) s(n mean sd min p25 p50 p75 max)
 
-esttab ., main(score) unstack wide mlabels("Instructors", noti) nonum 		 ///   
+esttab . using results/table3.rtf, main(score) unstack wide mlabels("Instructors", noti) nonum 		 ///   
 ren(count "# of Students" mean "Average Score" sd "Standard Deviation" 		 ///   
 min Minimum p25 "25th %ile" p50 Median p75 "75th %ile" max Maximum) noobs 	 ///   
-ti("Table 3.  Summary of Observed Scores Within and Between Instructors") nonote
+ti("Table 3.  Summary of Observed Scores Within and Between Instructors") nonote replace
 
 di _n "Within Instructor Comparison of Angoff and Contrasting Groups Classifications"
 
 forv i = 1/3 {
-	ta contgrpf angoffpf if tchid == `i', exact
+	estpost ta contgrpf angoffpf if tchid == `i', exact elabels
+	
+	esttab . using results/table`= 3 + `i''.rtf, cells(b) unstack varlabels(`e(labels)') eqlabels(`e(eqlabels)') collabel(, none) mlabel("Pass/Fail Derived from Angoff Cutscore") stats(p_exact, labels("Fisher Exact Test")) replace ti("Table . Contrasting Groups vs Angoff Classifications for Students in Instructor `i''s class.")
+	
 }
 
 di _n "Between Instructor Comparison of Angoff and Contrasting Groups Classifications"
-ta contgrpf angoffpf, exact	
+estpost ta contgrpf angoffpf, exact elabels
+
+esttab . using results/table7.rtf, cells(b) unstack varlabels(`e(labels)') eqlabels(`e(eqlabels)') collabel(, none) mlabel("Pass/Fail Derived from Angoff Cutscore") stats(p_exact, labels("Fisher Exact Test")) replace ti("Table . Contrasting Groups vs Angoff Classifications for All Students.")
 
 di _n "Correlation of Contrasting Groups and Angoff Cut Scores and Predicted Pass/Fail"
 tetrachoric angoffpf contgrpf pred, posdef 
 
 logit pred score
-esttab . using results/tables.rtf, label cells("b(star) se(par)") nonum		 ///   
+esttab . using results/table8.rtf, label cells("b(star) se(par)") nonum		 ///   
 ti("Table .  Logistic Regression of Predicted Pass/Fail on Observed Test Scores") ///   
-append
+replace
 
 margins, at(score=(0(1)15)) post
 
-esttab . using results/tables.rtf, cells(b(star) se(par)) rename(1._at 1 2._at 2 3._at 3 4._at 4 5._at 5 6._at 6 7._at 7 8._at 8 9._at 9 10._at 10 11._at 11 12._at 12 13._at 13 14._at 14 15._at 15 16._at 16) nonum mti("Marginal Effects") collabel(, none) noobs note("Standard Errors in Parentheses") ti("Table .  Predicted Probabilities by Observed Score")
+esttab . using results/table9.rtf, cells(b(star) se(par)) rename(1._at 1 2._at 2 3._at 3 4._at 4 5._at 5 6._at 6 7._at 7 8._at 8 9._at 9 10._at 10 11._at 11 12._at 12 13._at 13 14._at 14 15._at 15 16._at 16) nonum mti("Marginal Effects") collabel(, none) noobs note("Standard Errors in Parentheses") ti("Table .  Predicted Probabilities by Observed Score") replace
 
 marginsplot, recastci(rarea) ylab(0(0.1)1, angle(0) nogrid) yti("Pr(Pass)", c(black) size(small)) graphr(ic(white) fc(white) lc(white)) plotr(ic(white) fc(white) lc(white)) ciopts(lc(black) lw(vthin) fc(yellow%50)) plotop(mc(purple) mlw(vvthin) mlc(black) lc(purple) lw(medium)) ti("Instructor Predicted Passing vs" "Observed Test Score", c(black) size(medlarge) span) name(margplot, replace)
 
