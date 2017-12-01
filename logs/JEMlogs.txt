@@ -1,11 +1,11 @@
------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
       name:  jemlog
        log:  /Users/billy/Desktop/Articles/JEM/src/logs/JEMlogs.txt
   log type:  text
- opened on:  30 Nov 2017, 06:04:50
+ opened on:  30 Nov 2017, 23:13:09
 
 . 
-. import excel using ../JEMSTUDY2.xlsx, clear first case(l)
+. import excel using ../data/raw.xlsx, clear first case(l)
 
 . 
 . qui: replace porf = cond(porf == "P", "1", cond(porf == "F", "0", ""))
@@ -24,7 +24,7 @@
 . drop inst1
 
 . mata:
-------------------------------------------------- mata (type end to exit) ---------------------------------
+------------------------------------------------- mata (type end to exit) ----------------------------------------------------------
 :         angoff = select(st_data(., (4..6)), rowmissing(st_data(., (4..6))) :== 0)
 
 :         cutscores = J(1, 4, .)
@@ -37,8 +37,92 @@
 
 :         st_matrix("cutscores", cutscores)
 
+:         // Rater 1 ratings
+:         r1 = select(angoff[., (1..2)], angoff[., 3] :== 1)
+
+:         r2 = select(angoff[., (1..2)], angoff[., 3] :== 2)
+
+:         r3 = select(angoff[., (1..2)], angoff[., 3] :== 3)
+
+:         mu1 = mean(r1[., 2])
+
+:         mu2 = mean(r2[., 2])
+
+:         mu3 = mean(r3[., 2])
+
+:         sigma1 = sqrt(variance(r1[., 2]))
+
+:         sigma2 = sqrt(variance(r2[., 2]))
+
+:         sigma3 = sqrt(variance(r3[., 2]))
+
+:         items = J(3, 13, .)
+
+:         for(i = 1; i <= 13; i++) {
+>                 items[1, i] = r1[i, 2]
+>                 items[2, i] = r2[i, 2]
+>                 items[3, i] = r3[i, 2]
+>         }
+
+:         muitems = mean(items)
+
+:         sigmaitems = J(1, 13, .)
+
+:         for(i = 1; i <= 13; i++) {
+>                 sigmaitems[1, i] = sqrt(variance(items[., i]))
+>         }
+
+:         itemsummary = (muitems', sigmaitems')
+
+:         ratersummary = (mu1, sigma1 \ mu2, sigma2 \ mu3, sigma3)
+
+:         st_matrix("items", itemsummary)
+
+:         st_matrix("raters", ratersummary)
+
 : end
------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
+
+. 
+. forv i = 1/13 {
+  2.         loc irownames `irownames' Item`i'
+  3. }
+
+. loc colnms Mean "Std Dev"
+
+. mat rownames items = `irownames'
+
+. mat rownames raters = Instructor1 Instructor2 Instructor3
+
+. mat colnames items = `colnms'
+
+. mat colnames raters = `colnms'
+
+. mat li items
+
+items[13,2]
+             Mean    Std Dev
+ Item1         .8         .1
+ Item2  .58333333  .18929694
+ Item3         .6         .1
+ Item4  .46666667   .2081666
+ Item5  .53333333  .23094011
+ Item6        .65  .25980762
+ Item7        .55  .18027756
+ Item8        .45  .21794495
+ Item9         .5         .2
+Item10  .43333333  .23094011
+Item11         .5         .2
+Item12  .48333333  .20207259
+Item13        .45  .30413813
+
+. mat li raters
+
+raters[3,2]
+                  Mean    Std Dev
+Instructor1  .38461538   .1328919
+Instructor2  .49230769   .1754116
+Instructor3  .73846154  .07679476
 
 . 
 . drop itemid itemdiff
@@ -72,7 +156,7 @@
 
 . la var score "Observed Test Score"
 
-. la var pred "Contrasting Groups Based Prediction"
+. la var pred "Contrasting Groups Prediction"
 
 . la var tch1cutscore "Sum of Instructor 1 Item Difficulties"
 
@@ -101,9 +185,38 @@
 . la var angoffdist "Difference of Observed Student Score and Angoff Threshold"
 
 . 
+. qui: su score if pred == 0, de
+
+. loc fmed `r(p50)'
+
+. 
+. qui: su score if pred == 1, de
+
+. loc pmed `r(p50)'
+
+. 
+. loc contgr `= ((`pmed' - `fmed') / 2) + `fmed''
+
+. 
+. qui: g contgr = `contgr'
+
+. qui: g contgrpf = score >= contgr
+
+. qui: g contgrdist = score - contgr
+
+. 
+. la val contgrpf passfail
+
+. la var contgr "Contrasting Groups Cutscore"
+
+. la var contgrpf "Pass/Fail Indicator Derived from Contrasting Groups Cutscore"
+
+. la var contgrdist "Difference of Observed Student Score and Contrasting Groups Cutscore"
+
+. 
 . #d ;
 delimiter now ;
-. tw      hist score, discrete width(1) start(0) fc(yellow) lc(black) lw(vthin) ||
+. tw      hist score, discrete width(1) start(0) fc(yellow%50) lc(black) lw(vthin) ||
 >         kdensity score if pred == 0, lc(purple) lw(medthick) lp(solid) || 
 >         kdensity score if pred == 1, lc(orange) lw(medthick) lp(solid) 
 >         legend(region(lc(white)) nobox pos(12) rows(3) cols(1) size(small)
@@ -112,6 +225,12 @@ delimiter now ;
 >                 label(3 "Smoothed Predicted Passing")) 
 >         yti("Density", size(small)) xti("Observed Student Score", size(small)) 
 >         xlab(#15, labsize(small)) xsca(range(0(1)15))
+>         xline(`fmed', lc(black) lw(medthick) lp(dash))
+>         xline(`contgr', lc(black) lw(medthick) lp(dot))
+>         xline(`pmed', lc(black) lw(medthick) lp(dash))
+>                 note(   "`fmed' = Predicted Failing Median - Dashed Black Line"
+>                                 "`contgr' = Contrasting Groups Cutscore - Dotted Black Line"
+>                                 "`pmed' = Predicted Passing Median - Dashed Black Line", c(black) size(vsmall))
 >         ylab(, nogrid angle(0) labsize(small)) 
 >         graphr(ic(white) lc(white) fc(white)) 
 >         plotr(ic(white) lc(white) fc(white)) 
@@ -119,7 +238,7 @@ delimiter now ;
 >                 "Contrasting Groups Based Cutscores", c(black) size(medlarge) span)
 >         name(contrastingGroup, replace);
 
-.         tw      hist score, discrete width(1) start(0) fc(yellow) lc(black) lw(vthin) ||
+. tw      hist score, discrete width(1) start(0) fc(yellow%50) lc(black) lw(vthin) ||
 >         kdensity score if angoffpf == 0, lc(purple) lw(medthick) lp(solid) || 
 >         kdensity score if angoffpf == 1, lc(orange) lw(medthick) lp(solid) 
 >         legend(region(lc(white)) nobox pos(12) rows(3) cols(1) size(small)
@@ -135,7 +254,8 @@ delimiter now ;
 >                 "Angoff Method Based Cutscores", c(black) size(medlarge) span)
 >         name(angoff, replace);
 
-. tw      hist score, discrete width(1) start(0) fc(yellow) lc(black) lw(vthin) ||
+. /*
+> tw      hist score, discrete width(1) start(0) fc(yellow) lc(black) lw(vthin) ||
 >         kdensity score if tch1pf == 0, lc(purple) lw(medthick) lp(solid) || 
 >         kdensity score if tch1pf == 1, lc(orange) lw(medthick) lp(solid) 
 >         legend(region(lc(white)) nobox pos(12) rows(3) cols(1) size(small)
@@ -150,8 +270,8 @@ delimiter now ;
 >         ti(     "Score Distributions Based On : " 
 >                 "Sum of Instructor 1 Estimated Item Difficulties", c(black) size(medlarge) span)
 >         name(tch1, replace);
-
-. tw      hist score, discrete width(1) start(0) fc(yellow) lc(black) lw(vthin) ||
+> 
+> tw      hist score, discrete width(1) start(0) fc(yellow) lc(black) lw(vthin) ||
 >         kdensity score if tch2pf == 0, lc(purple) lw(medthick) lp(solid) || 
 >         kdensity score if tch2pf == 1, lc(orange) lw(medthick) lp(solid) 
 >         legend(region(lc(white)) nobox pos(12) rows(3) cols(1) size(small)
@@ -166,8 +286,8 @@ delimiter now ;
 >         ti(     "Score Distributions Based On : " 
 >                 "Sum of Instructor 2 Estimated Item Difficulties", c(black) size(medlarge) span)
 >         name(tch2, replace);
-
-. tw      hist score, discrete width(1) start(0) fc(yellow) lc(black) lw(vthin) ||
+> 
+> tw      hist score, discrete width(1) start(0) fc(yellow) lc(black) lw(vthin) ||
 >         kdensity score if tch3pf == 0, lc(purple) lw(medthick) lp(solid) || 
 >         kdensity score if tch3pf == 1, lc(orange) lw(medthick) lp(solid) 
 >         legend(region(lc(white)) nobox pos(12) rows(3) cols(1) size(small)
@@ -182,278 +302,332 @@ delimiter now ;
 >         ti(     "Score Distributions Based On : " 
 >                 "Sum of Instructor 3 Estimated Item Difficulties", c(black) size(medlarge) span)
 >         name(tch3, replace);
-
-.         gr combine contrastingGroup angoff, name(methodcombo, replace) 
+>         
+> gr combine tch1 tch2 tch3, name(tchcombo, replace)
+>         graphr(ic(white) lc(white) fc(white)) 
+>         plotr(ic(white) lc(white) fc(white)) ;
+> 
+> */
+> 
+> gr combine contrastingGroup angoff, name(methodcombo, replace) 
 >         graphr(ic(white) lc(white) fc(white)) 
 >         plotr(ic(white) lc(white) fc(white)) ;
 
-. gr combine tch1 tch2 tch3, name(tchcombo, replace)
->         graphr(ic(white) lc(white) fc(white)) 
->         plotr(ic(white) lc(white) fc(white)) ;
-
-. #d cr   
+.         #d cr   
 delimiter now cr
 . 
-. foreach v in contrastingGroup angoff tch1 tch2 tch3 methodcombo tchcombo {
+. foreach v in contrastingGroup angoff methodcombo {
   2.         qui: gr export graphs/`v'.pdf, as(pdf) name(`v') replace
   3. }
+
+. 
+. estout m(raters) using results/tables.rtf, mlabels(, none)                                       ///   
+> ti("Table 1. Average and Standard Deviation of Raters' Ratings") replace
+(note: file results/tables.rtf not found)
+(output written to results/tables.rtf)
+
+. 
+. estout m(items) using results/tables.rtf, mlabels(, none)                                        ///   
+> ti("Table 2. Average and Standard Deviation of Item Ratings") append
+(output written to results/tables.rtf)
 
 . 
 . di _n "Score Summary Statistics"
 
 Score Summary Statistics
 
-. tabstat score, by(tchid) c(s) s(n mean sd min p25 p50 p75 max)
+. estpost tabstat score, by(tchid) c(v) s(n mean sd min p25 p50 p75 max)
 
-Summary for variables: score
-     by categories of: tchid (Instructor ID #)
+Summary statistics: count mean sd min p25 p50 p75 max
+     for variables: score
+  by categories of: tchid
 
-   tchid |         N      mean        sd       min       p25       p50       p75       max
----------+--------------------------------------------------------------------------------
-       1 |        17  5.411765  1.502449         3         4         5         6         8
-       2 |        29  6.172414  2.916321         2         4         6         8        13
-       3 |         8       5.5  2.390457         3         4         4         8         9
----------+--------------------------------------------------------------------------------
-   Total |        54  5.833333  2.462933         2         4         5         8        13
-------------------------------------------------------------------------------------------
+       tchid |  e(score) 
+-------------+-----------
+1            |           
+       count |        17 
+        mean |  5.411765 
+          sd |  1.502449 
+         min |         3 
+         p25 |         4 
+         p50 |         5 
+         p75 |         6 
+         max |         8 
+-------------+-----------
+2            |           
+       count |        29 
+        mean |  6.172414 
+          sd |  2.916321 
+         min |         2 
+         p25 |         4 
+         p50 |         6 
+         p75 |         8 
+         max |        13 
+-------------+-----------
+3            |           
+       count |         8 
+        mean |       5.5 
+          sd |  2.390457 
+         min |         3 
+         p25 |         4 
+         p50 |         4 
+         p75 |         8 
+         max |         9 
+-------------+-----------
+Total        |           
+       count |        54 
+        mean |  5.833333 
+          sd |  2.462933 
+         min |         2 
+         p25 |         4 
+         p50 |         5 
+         p75 |         8 
+         max |        13 
 
 . 
-. di _n "Score Distributions within Instructors by predicted outcome"
+. esttab ., main(score) unstack wide mlabels("Instructors", noti) nonum            ///   
+> ren(count "# of Students" mean "Average Score" sd "Standard Deviation"           ///   
+> min Minimum p25 "25th %ile" p50 Median p75 "75th %ile" max Maximum) noobs        ///   
+> ti("Table 3.  Summary of Observed Scores Within and Between Instructors") nonote
 
-Score Distributions within Instructors by predicted outcome
+Table 3.  Summary of Observed Scores Within and Between Instructors
+--------------------------------------------------------------------------------------------------------------------------------
+              Instructors                                                                                                       
+                        1                            2                            3                        Total                
+--------------------------------------------------------------------------------------------------------------------------------
+# of Stude~s           17                           29                            8                           54                
+Average Sc~e        5.412                        6.172                        5.500                        5.833                
+Standard D~n        1.502                        2.916                        2.390                        2.463                
+Minimum                 3                            2                            3                            2                
+25th %ile               4                            4                            4                            4                
+Median                  5                            6                            4                            5                
+75th %ile               6                            8                            8                            8                
+Maximum                 8                           13                            9                           13                
+--------------------------------------------------------------------------------------------------------------------------------
+
+. 
+. di _n "Within Instructor Comparison of Angoff and Contrasting Groups Classifications"
+
+Within Instructor Comparison of Angoff and Contrasting Groups Classifications
 
 . 
 . forv i = 1/3 {
-  2.         ta score pred if tchid == `i', exact
+  2.         ta contgrpf angoffpf if tchid == `i', exact
   3. }
 
-Enumerating sample-space combinations:
-stage 6:  enumerations = 1
-stage 5:  enumerations = 2
-stage 4:  enumerations = 3
-stage 3:  enumerations = 5
-stage 2:  enumerations = 8
-stage 1:  enumerations = 0
-
-           |  Contrasting Groups
-  Observed |   Based Prediction
-Test Score |      Fail       Pass |     Total
+ Pass/Fail |
+ Indicator |
+   Derived |
+      from |  Pass/Fail Indicator
+Contrastin | Derived using Angoff
+  g Groups |       Threshold
+  Cutscore |      Fail       Pass |     Total
 -----------+----------------------+----------
-         3 |         1          0 |         1 
-         4 |         3          2 |         5 
-         5 |         3          0 |         3 
-         6 |         3          1 |         4 
-         7 |         0          2 |         2 
-         8 |         1          0 |         1 
+      Fail |         9          0 |         9 
+      Pass |         4          4 |         8 
 -----------+----------------------+----------
-     Total |        11          5 |        16 
+     Total |        13          4 |        17 
 
-           Fisher's exact =                 0.334
+           Fisher's exact =                 0.029
+   1-sided Fisher's exact =                 0.029
 
-Enumerating sample-space combinations:
-stage 10: enumerations = 1
-stage 9:  enumerations = 2
-stage 8:  enumerations = 3
-stage 7:  enumerations = 4
-stage 6:  enumerations = 9
-stage 5:  enumerations = 13
-stage 4:  enumerations = 16
-stage 3:  enumerations = 29
-stage 2:  enumerations = 34
-stage 1:  enumerations = 0
-
-           |  Contrasting Groups
-  Observed |   Based Prediction
-Test Score |      Fail       Pass |     Total
+ Pass/Fail |
+ Indicator |
+   Derived |
+      from |  Pass/Fail Indicator
+Contrastin | Derived using Angoff
+  g Groups |       Threshold
+  Cutscore |      Fail       Pass |     Total
 -----------+----------------------+----------
-         2 |         3          1 |         4 
-         3 |         0          1 |         1 
-         4 |         2          2 |         4 
-         5 |         3          2 |         5 
-         6 |         1          1 |         2 
-         7 |         0          2 |         2 
-         8 |         1          5 |         6 
-         9 |         0          2 |         2 
-        10 |         1          0 |         1 
-        13 |         0          1 |         1 
+      Fail |        14          0 |        14 
+      Pass |         2         13 |        15 
 -----------+----------------------+----------
-     Total |        11         17 |        28 
+     Total |        16         13 |        29 
 
-           Fisher's exact =                 0.399
+           Fisher's exact =                 0.000
+   1-sided Fisher's exact =                 0.000
 
-Enumerating sample-space combinations:
-stage 4:  enumerations = 1
-stage 3:  enumerations = 1
-stage 2:  enumerations = 1
-stage 1:  enumerations = 0
-
-           |  Contrasting Groups
-  Observed |   Based Prediction
-Test Score |      Fail       Pass |     Total
+ Pass/Fail |
+ Indicator |
+   Derived |
+      from |  Pass/Fail Indicator
+Contrastin | Derived using Angoff
+  g Groups |       Threshold
+  Cutscore |      Fail       Pass |     Total
 -----------+----------------------+----------
-         3 |         1          0 |         1 
-         4 |         0          4 |         4 
-         8 |         0          1 |         1 
-         9 |         0          1 |         1 
+      Fail |         5          0 |         5 
+      Pass |         0          3 |         3 
 -----------+----------------------+----------
-     Total |         1          6 |         7 
+     Total |         5          3 |         8 
 
-           Fisher's exact =                 0.429
+           Fisher's exact =                 0.018
+   1-sided Fisher's exact =                 0.018
 
 . 
-. di _n "Score Distributions between Instructors by predicted outcome"
+. di _n "Between Instructor Comparison of Angoff and Contrasting Groups Classifications"
 
-Score Distributions between Instructors by predicted outcome
+Between Instructor Comparison of Angoff and Contrasting Groups Classifications
 
-. ta score pred, exact    
+. ta contgrpf angoffpf, exact     
 
-Enumerating sample-space combinations:
-stage 10: enumerations = 1
-stage 9:  enumerations = 2
-stage 8:  enumerations = 3
-stage 7:  enumerations = 10
-stage 6:  enumerations = 18
-stage 5:  enumerations = 60
-stage 4:  enumerations = 104
-stage 3:  enumerations = 240
-stage 2:  enumerations = 488
-stage 1:  enumerations = 0
-
-           |  Contrasting Groups
-  Observed |   Based Prediction
-Test Score |      Fail       Pass |     Total
+ Pass/Fail |
+ Indicator |
+   Derived |
+      from |  Pass/Fail Indicator
+Contrastin | Derived using Angoff
+  g Groups |       Threshold
+  Cutscore |      Fail       Pass |     Total
 -----------+----------------------+----------
-         2 |         3          1 |         4 
-         3 |         2          1 |         3 
-         4 |         5          8 |        13 
-         5 |         6          2 |         8 
-         6 |         4          2 |         6 
-         7 |         0          4 |         4 
-         8 |         2          6 |         8 
-         9 |         0          3 |         3 
-        10 |         1          0 |         1 
-        13 |         0          1 |         1 
+      Fail |        28          0 |        28 
+      Pass |         6         20 |        26 
 -----------+----------------------+----------
-     Total |        23         28 |        51 
+     Total |        34         20 |        54 
 
-           Fisher's exact =                 0.062
-
-. 
-. 
-. // Here is the non-parametric receiver operating curve estimation
-. roctab pred score, detail bamber summ
-
-Detailed report of sensitivity and specificity
-------------------------------------------------------------------------------
-                                           Correctly
-Cutpoint      Sensitivity   Specificity   Classified          LR+          LR-
-------------------------------------------------------------------------------
-( >= 2 )          100.00%         0.00%       54.90%       1.0000     
-( >= 3 )           96.43%        13.04%       58.82%       1.1089       0.2738
-( >= 4 )           92.86%        21.74%       60.78%       1.1865       0.3286
-( >= 5 )           64.29%        43.48%       54.90%       1.1374       0.8214
-( >= 6 )           57.14%        69.57%       62.75%       1.8776       0.6161
-( >= 7 )           50.00%        86.96%       66.67%       3.8333       0.5750
-( >= 8 )           35.71%        86.96%       58.82%       2.7381       0.7393
-( >= 9 )           14.29%        95.65%       50.98%       3.2857       0.8961
-( >= 10 )           3.57%        95.65%       45.10%       0.8214       1.0081
-( >= 13 )           3.57%       100.00%       47.06%                    0.9643
-( >  13 )           0.00%       100.00%       45.10%                    1.0000
-------------------------------------------------------------------------------
-
-
-                      ROC      Bamber        -Asymptotic Normal--
-           Obs       Area     Std. Err.      [95% Conf. Interval]
-     ------------------------------------------------------------
-            51     0.6561       0.0766        0.50591     0.80621
+           Fisher's exact =                 0.000
+   1-sided Fisher's exact =                 0.000
 
 . 
-. // Seems like contrasting groups yields the same result overall
-. // Perhaps differences between instructors
-. 
-. forv i = 1/3 {
-  2.         di _n(2) "Instructor ID# `i'.  Sum of Predicted Item Difficulties for this instructor = " cuts
-> cores[1, `i'] 
-  3.         roctab pred score if tchid == `i', detail bamber summ
-  4. }
+. di _n "Correlation of Contrasting Groups and Angoff Cut Scores and Predicted Pass/Fail"
 
+Correlation of Contrasting Groups and Angoff Cut Scores and Predicted Pass/Fail
 
-Instructor ID# 1.  Sum of Predicted Item Difficulties for this instructor = 5
+. tetrachoric angoffpf contgrpf pred, posdef 
+(obs=53)
 
-Detailed report of sensitivity and specificity
-------------------------------------------------------------------------------
-                                           Correctly
-Cutpoint      Sensitivity   Specificity   Classified          LR+          LR-
-------------------------------------------------------------------------------
-( >= 3 )          100.00%         0.00%       31.25%       1.0000     
-( >= 4 )          100.00%         9.09%       37.50%       1.1000       0.0000
-( >= 5 )           60.00%        36.36%       43.75%       0.9429       1.1000
-( >= 6 )           60.00%        63.64%       62.50%       1.6500       0.6286
-( >= 7 )           40.00%        90.91%       75.00%       4.4000       0.6600
-( >= 8 )            0.00%        90.91%       62.50%       0.0000       1.1000
-( >  8 )            0.00%       100.00%       68.75%                    1.0000
-------------------------------------------------------------------------------
+matrix with tetrachoric correlations is not positive semidefinite;
+  it has 1 negative eigenvalue
+  maxdiff(corr,adj-corr) =  0.0252
+  (adj-corr: tetrachoric correlations adjusted to be positive semidefinite)
 
-
-                      ROC      Bamber        -Asymptotic Normal--
-           Obs       Area     Std. Err.      [95% Conf. Interval]
-     ------------------------------------------------------------
-            16     0.6091       0.1734        0.26915     0.94903
-
-
-Instructor ID# 2.  Sum of Predicted Item Difficulties for this instructor = 6.4
-
-Detailed report of sensitivity and specificity
-------------------------------------------------------------------------------
-                                           Correctly
-Cutpoint      Sensitivity   Specificity   Classified          LR+          LR-
-------------------------------------------------------------------------------
-( >= 2 )          100.00%         0.00%       60.71%       1.0000     
-( >= 3 )           94.12%        27.27%       67.86%       1.2941       0.2157
-( >= 4 )           88.24%        27.27%       64.29%       1.2132       0.4314
-( >= 5 )           76.47%        45.45%       64.29%       1.4020       0.5176
-( >= 6 )           64.71%        72.73%       67.86%       2.3725       0.4853
-( >= 7 )           58.82%        81.82%       67.86%       3.2353       0.5033
-( >= 8 )           47.06%        81.82%       60.71%       2.5882       0.6471
-( >= 9 )           17.65%        90.91%       46.43%       1.9412       0.9059
-( >= 10 )           5.88%        90.91%       39.29%       0.6471       1.0353
-( >= 13 )           5.88%       100.00%       42.86%                    0.9412
-( >  13 )           0.00%       100.00%       39.29%                    1.0000
-------------------------------------------------------------------------------
-
-
-                      ROC      Bamber        -Asymptotic Normal--
-           Obs       Area     Std. Err.      [95% Conf. Interval]
-     ------------------------------------------------------------
-            28     0.6979       0.1053        0.49145     0.90427
-
-
-Instructor ID# 3.  Sum of Predicted Item Difficulties for this instructor = 9.6
-
-Detailed report of sensitivity and specificity
-------------------------------------------------------------------------------
-                                           Correctly
-Cutpoint      Sensitivity   Specificity   Classified          LR+          LR-
-------------------------------------------------------------------------------
-( >= 3 )          100.00%         0.00%       85.71%       1.0000     
-( >= 4 )          100.00%       100.00%      100.00%                    0.0000
-( >= 8 )           33.33%       100.00%       42.86%                    0.6667
-( >= 9 )           16.67%       100.00%       28.57%                    0.8333
-( >  9 )            0.00%       100.00%       14.29%                    1.0000
-------------------------------------------------------------------------------
-
-
-                      ROC      Bamber        -Asymptotic Normal--
-           Obs       Area     Std. Err.      [95% Conf. Interval]
-     ------------------------------------------------------------
-             7     1.0000            .              .     1.00000
+    adj-corr | angoffpf contgrpf     pred
+-------------+---------------------------
+    angoffpf |   1.0000 
+    contgrpf |   0.9748   1.0000 
+        pred |   0.6374   0.4497   1.0000 
 
 . 
+. logit pred score
+
+Iteration 0:   log likelihood = -36.273183  
+Iteration 1:   log likelihood = -33.144232  
+Iteration 2:   log likelihood = -33.125639  
+Iteration 3:   log likelihood = -33.125632  
+Iteration 4:   log likelihood = -33.125632  
+
+Logistic regression                             Number of obs     =         53
+                                                LR chi2(1)        =       6.30
+                                                Prob > chi2       =     0.0121
+Log likelihood = -33.125632                     Pseudo R2         =     0.0868
+
+------------------------------------------------------------------------------
+        pred |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       score |    .319296    .139803     2.28   0.022     .0452871    .5933049
+       _cons |  -1.529436   .8158259    -1.87   0.061    -3.128426    .0695532
+------------------------------------------------------------------------------
+
+. esttab . using results/tables.rtf, label cells("b(star) se(par)") nonum          ///   
+> ti("Table .  Logistic Regression of Predicted Pass/Fail on Observed Test Scores") ///   
+> append
+(output written to results/tables.rtf)
+
 . 
+. margins, at(score=(0(1)15)) post
+
+Adjusted predictions                            Number of obs     =         53
+Model VCE    : OIM
+
+Expression   : Pr(pred), predict()
+
+1._at        : score           =           0
+
+2._at        : score           =           1
+
+3._at        : score           =           2
+
+4._at        : score           =           3
+
+5._at        : score           =           4
+
+6._at        : score           =           5
+
+7._at        : score           =           6
+
+8._at        : score           =           7
+
+9._at        : score           =           8
+
+10._at       : score           =           9
+
+11._at       : score           =          10
+
+12._at       : score           =          11
+
+13._at       : score           =          12
+
+14._at       : score           =          13
+
+15._at       : score           =          14
+
+16._at       : score           =          15
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |     Margin   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         _at |
+          1  |   .1780762   .1194084     1.49   0.136      -.05596    .4121124
+          2  |   .2296762   .1215952     1.89   0.059     -.008646    .4679985
+          3  |   .2909356   .1163672     2.50   0.012     .0628602    .5190111
+          4  |   .3608796   .1039553     3.47   0.001     .1571309    .5646284
+          5  |   .4372692   .0877526     4.98   0.000     .2652772    .6092612
+          6  |   .5167546   .0750436     6.89   0.000     .3696719    .6638373
+          7  |   .5954012   .0732758     8.13   0.000     .4517832    .7390192
+          8  |    .669436   .0809545     8.27   0.000     .5107681     .828104
+          9  |   .7359321   .0899475     8.18   0.000     .5596382     .912226
+         10  |   .7931843    .094764     8.37   0.000     .6074503    .9789182
+         11  |   .8407104     .09396     8.95   0.000     .6565522    1.024869
+         12  |   .8789814   .0883571     9.95   0.000     .7058047    1.052158
+         13  |   .9090521    .079589    11.42   0.000     .7530606    1.065044
+         14  |   .9322269   .0692837    13.46   0.000     .7964335     1.06802
+         15  |   .9498224   .0587103    16.18   0.000     .8347523    1.064893
+         16  |   .9630309   .0487052    19.77   0.000     .8675705    1.058491
+------------------------------------------------------------------------------
+
+. 
+. esttab . using results/tables.rtf, cells(b(star) se(par)) rename(1._at 1 2._at 2 3._at 3 4._at 4 5._at 5 6._at 6 7._at 7 8._at 8 9
+> ._at 9 10._at 10 11._at 11 12._at 12 13._at 13 14._at 14 15._at 15 16._at 16) nonum mti("Marginal Effects") collabel(, none) noobs
+>  note("Standard Errors in Parentheses") ti("Table .  Predicted Probabilities by Observed Score")
+file results/tables.rtf already exists
+r(602);
+
+end of do-file
+
+r(602);
+
+. do "/var/folders/px/cg4_66j52pvfn2z7pbjvb5d80000gn/T//SD01075.000000"
+
+. esttab . using results/tables.rtf, cells(b(star) se(par)) rename(1._at 1 2._at 2 3._at 3 4._at 4 5._at 5 6._at 6 7._at 7 8._at 8 9
+> ._at 9 10._at 10 11._at 11 12._at 12 13._at 13 14._at 14 15._at 15 16._at 16) nonum mti("Marginal Effects") collabel(, none) noobs
+>  note("Standard Errors in Parentheses") ti("Table .  Predicted Probabilities by Observed Score") append
+(output written to results/tables.rtf)
+
+. 
+. marginsplot, recastci(rarea) ylab(0(0.1)1, angle(0) nogrid) yti("Pr(Pass)", c(black) size(small)) graphr(ic(white) fc(white) lc(wh
+> ite)) plotr(ic(white) fc(white) lc(white)) ciopts(lc(black) lw(vthin) fc(yellow%50)) plotop(mc(purple) mlw(vvthin) mlc(black) lc(p
+> urple) lw(medium)) ti("Instructor Predicted Passing vs" "Observed Test Score", c(black) size(medlarge) span) name(margplot, replac
+> e)
+
+  Variables that uniquely identify margins: score
+
+. 
+. gr export graphs/logisticMarginalEffects.pdf, as(pdf) name(margplot) replace
+(file /Users/billy/Desktop/Articles/JEM/src/graphs/logisticMarginalEffects.pdf written in PDF format)
+
 . 
 . log c _all
       name:  jemlog
        log:  /Users/billy/Desktop/Articles/JEM/src/logs/JEMlogs.txt
   log type:  text
- closed on:  30 Nov 2017, 06:05:11
------------------------------------------------------------------------------------------------------------
+ closed on:  30 Nov 2017, 23:13:53
+------------------------------------------------------------------------------------------------------------------------------------
