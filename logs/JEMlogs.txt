@@ -2,7 +2,7 @@
       name:  jemlog
        log:  /Users/billy/Desktop/Articles/JEM/src/logs/JEMlogs.txt
   log type:  text
- opened on:  30 Nov 2017, 23:22:45
+ opened on:   3 Dec 2017, 11:09:28
 
 . 
 . import excel using ../data/raw.xlsx, clear first case(l)
@@ -84,10 +84,40 @@
 ------------------------------------------------------------------------------------------------------------------------------------
 
 . 
-. forv i = 1/13 {
-  2.         loc irownames `irownames' Item`i'
-  3. }
+. loc istem1 "Something"
 
+. loc istem2 "else"
+
+. loc istem3 "other"
+
+. loc istem4 "a"
+
+. loc istem5 "b"
+
+. loc istem6 "c"
+
+. loc istem7 "d"
+
+. loc istem8 "e"
+
+. loc istem9 "f"
+
+. loc istem10 "g"
+
+. loc istem11 "h"
+
+. loc istem12 "i"
+
+. loc istem13 "j"
+
+. 
+. 
+. forv i = 1/13 {
+  2.         loc irownames `"`irownames' "Item `i' : `istem`i''""'
+  3.         //loc irownames `irownames' Item`i'
+. }
+
+. 
 . loc colnms Mean "Std Dev"
 
 . mat rownames items = `irownames'
@@ -101,20 +131,20 @@
 . mat li items
 
 items[13,2]
-             Mean    Std Dev
- Item1         .8         .1
- Item2  .58333333  .18929694
- Item3         .6         .1
- Item4  .46666667   .2081666
- Item5  .53333333  .23094011
- Item6        .65  .25980762
- Item7        .55  .18027756
- Item8        .45  .21794495
- Item9         .5         .2
-Item10  .43333333  .23094011
-Item11         .5         .2
-Item12  .48333333  .20207259
-Item13        .45  .30413813
+                        Mean    Std Dev
+Item 1 :Something         .8         .1
+     Item 2 :else  .58333333  .18929694
+    Item 3 :other         .6         .1
+        Item 4 :a  .46666667   .2081666
+        Item 5 :b  .53333333  .23094011
+        Item 6 :c        .65  .25980762
+        Item 7 :d        .55  .18027756
+        Item 8 :e        .45  .21794495
+        Item 9 :f         .5         .2
+       Item 10 :g  .43333333  .23094011
+       Item 11 :h         .5         .2
+       Item 12 :i  .48333333  .20207259
+       Item 13 :j        .45  .30413813
 
 . mat li raters
 
@@ -125,537 +155,1935 @@ Instructor2  .49230769   .1754116
 Instructor3  .73846154  .07679476
 
 . 
-. drop itemid itemdiff
+end of do-file
 
-. forv i = 1/3 {
-  2.         g tch`i'cutscore = cutscores[1, `i']
-  3.         g tch`i'pf = score >= tch`i'cutscore
-  4.         g tch`i'dist = score - tch`i'cutscore
-  5. }
-(5 missing values generated)
-(5 missing values generated)
-(5 missing values generated)
+. estout m(raters), mlabels(, none) ti("Table 1. Average and Standard Deviation of Raters' Ratings")
 
-. g angoff = cutscores[1, 4]
+Table 1. Average and Standard Deviation of Raters' Ratings
+--------------------------------------
+                     Mean      Std Dev
+--------------------------------------
+Instructor1      .3846154     .1328919
+Instructor2      .4923077     .1754116
+Instructor3      .7384615     .0767948
+--------------------------------------
 
-. g byte angoffpf = score >= angoff
+. estout m(items), mlabels(, none) ti("Table 2. Average and Standard Deviation of Item Ratings") 
 
-. g byte angoffdist = score - angoff
-(5 missing values generated)
+Table 2. Average and Standard Deviation of Item Ratings
+--------------------------------------
+                     Mean      Std Dev
+--------------------------------------
+Item 1                                
+Something              .8           .1
+--------------------------------------
+Item 2                                
+else             .5833333     .1892969
+--------------------------------------
+Item 3                                
+other                  .6           .1
+--------------------------------------
+Item 4                                
+a                .4666667     .2081666
+--------------------------------------
+Item 5                                
+b                .5333333     .2309401
+--------------------------------------
+Item 6                                
+c                     .65     .2598076
+--------------------------------------
+Item 7                                
+d                     .55     .1802776
+--------------------------------------
+Item 8                                
+e                     .45     .2179449
+--------------------------------------
+Item 9                                
+f                      .5           .2
+--------------------------------------
+Item 10                               
+g                .4333333     .2309401
+--------------------------------------
+Item 11                               
+h                      .5           .2
+--------------------------------------
+Item 12                               
+i                .4833333     .2020726
+--------------------------------------
+Item 13                               
+j                     .45     .3041381
+--------------------------------------
 
-. foreach v of var *pf {
-  2.         la val `v' passfail
-  3. }
+. h ascii
 
-. drop if mi(stdid)
-(5 observations deleted)
+. ascii
+33  ! 34  " 35  # 36  $ 37  % 38  & 39  ' 40  ( 41  ) 42  * 43  + 44  , 45  - 46  . 47  / 48  0 49  1 50  2 51  3 52  4 53  5 54  6
+55  7 56  8 57  9 58  : 59  ; 60  < 61  = 62  > 63  ? 64  @ 65  A 66  B 67  C 68  D 69  E 70  F 71  G 72  H 73  I 74  J 75  K 76  L
+77  M 78  N 79  O 80  P 81  Q 82  R 83  S 84  T 85  U 86  V 87  W 88  X 89  Y 90  Z 91  [ 92  \ 93  ] 94  ^ 95  _ 96  ` 97  a 98  b
+99  c 100 d 101 e 102 f 103 g 104 h 105 i 106 j 107 k 108 l 109 m 110 n 111 o 112 p 113 q 114 r 115 s 116 t 117 u 118 v 119 w 120 x
+121 y 122 z 123 { 124 | 125 } 126 ~ 127  128 € 129  130 ‚ 131 ƒ 132 „ 133 … 134 † 135 ‡ 136 ˆ 137 ‰ 138 Š 139 ‹ 140 Œ 141  142 Ž
+143  144  145 ‘ 146 ’ 147 “ 148 ” 149 • 150 – 151 — 152 ˜ 153 ™ 154 š 155 › 156 œ 157  158 ž 159 Ÿ 160   161 ¡ 162 ¢ 163 £ 164 ¤
+165 ¥ 166 ¦ 167 § 168 ¨ 169 © 170 ª 171 « 172 ¬ 173 ­ 174 ® 175 ¯ 176 ° 177 ± 178 ² 179 ³ 180 ´ 181 µ 182 ¶ 183 · 184 ¸ 185 ¹ 186 º
+187 » 188 ¼ 189 ½ 190 ¾ 191 ¿ 192 À 193 Á 194 Â 195 Ã 196 Ä 197 Å 198 Æ 199 Ç 200 È 201 É 202 Ê 203 Ë 204 Ì 205 Í 206 Î 207 Ï 208 Ð
+209 Ñ 210 Ò 211 Ó 212 Ô 213 Õ 214 Ö 215 × 216 Ø 217 Ù 218 Ú 219 Û 220 Ü 221 Ý 222 Þ 223 ß 224 à 225 á 226 â 227 ã 228 ä 229 å 230 æ
+231 ç 232 è 233 é 234 ê 235 ë 236 ì 237 í 238 î 239 ï 240 ð 241 ñ 242 ò 243 ó 244 ô 245 õ 246 ö 247 ÷ 248 ø 249 ù 250 ú 251 û 252 ü
+253 ý 254 þ 255 ÿ
+. di char(248)
+�
 
-. la var stdid "Student ID #"
+. di char(247)
+�
 
-. la var tchid "Instructor ID #"
+. di char(149)
+�
 
-. la var score "Observed Test Score"
+. di char(111)
+o
 
-. la var pred "Contrasting Groups Prediction"
+. di {c 247}
+invalid syntax
+r(198);
 
-. la var tch1cutscore "Sum of Instructor 1 Item Difficulties"
+. di as smcl {c 247}
+invalid syntax
+r(198);
 
-. la var tch2cutscore "Sum of Instructor 2 Item Difficulties"
+. di in smcl {c 247}
+invalid syntax
+r(198);
 
-. la var tch3cutscore "Sum of Instructor 3 Item Difficulties"
+. di in smcl "{c 247}"
+÷
 
-. la var angoff "Cutscore Derived through Angoff Method"
+. di in smcl "{c 248}"
+ø
+
+. ascii
+33  ! 34  " 35  # 36  $ 37  % 38  & 39  ' 40  ( 41  ) 42  * 43  + 44  , 45  - 46  . 47  / 48  0 49  1 50  2 51  3 52  4 53  5 54  6
+55  7 56  8 57  9 58  : 59  ; 60  < 61  = 62  > 63  ? 64  @ 65  A 66  B 67  C 68  D 69  E 70  F 71  G 72  H 73  I 74  J 75  K 76  L
+77  M 78  N 79  O 80  P 81  Q 82  R 83  S 84  T 85  U 86  V 87  W 88  X 89  Y 90  Z 91  [ 92  \ 93  ] 94  ^ 95  _ 96  ` 97  a 98  b
+99  c 100 d 101 e 102 f 103 g 104 h 105 i 106 j 107 k 108 l 109 m 110 n 111 o 112 p 113 q 114 r 115 s 116 t 117 u 118 v 119 w 120 x
+121 y 122 z 123 { 124 | 125 } 126 ~ 127  128 € 129  130 ‚ 131 ƒ 132 „ 133 … 134 † 135 ‡ 136 ˆ 137 ‰ 138 Š 139 ‹ 140 Œ 141  142 Ž
+143  144  145 ‘ 146 ’ 147 “ 148 ” 149 • 150 – 151 — 152 ˜ 153 ™ 154 š 155 › 156 œ 157  158 ž 159 Ÿ 160   161 ¡ 162 ¢ 163 £ 164 ¤
+165 ¥ 166 ¦ 167 § 168 ¨ 169 © 170 ª 171 « 172 ¬ 173 ­ 174 ® 175 ¯ 176 ° 177 ± 178 ² 179 ³ 180 ´ 181 µ 182 ¶ 183 · 184 ¸ 185 ¹ 186 º
+187 » 188 ¼ 189 ½ 190 ¾ 191 ¿ 192 À 193 Á 194 Â 195 Ã 196 Ä 197 Å 198 Æ 199 Ç 200 È 201 É 202 Ê 203 Ë 204 Ì 205 Í 206 Î 207 Ï 208 Ð
+209 Ñ 210 Ò 211 Ó 212 Ô 213 Õ 214 Ö 215 × 216 Ø 217 Ù 218 Ú 219 Û 220 Ü 221 Ý 222 Þ 223 ß 224 à 225 á 226 â 227 ã 228 ä 229 å 230 æ
+231 ç 232 è 233 é 234 ê 235 ë 236 ì 237 í 238 î 239 ï 240 ð 241 ñ 242 ò 243 ó 244 ô 245 õ 246 ö 247 ÷ 248 ø 249 ù 250 ú 251 û 252 ü
+253 ý 254 þ 255 ÿ
+. di in smcl "{c 149}"
+•
+
+. loc dot `: di in smcl "{c 149}"'
+in not found
+
+. loc dot `"`: di in smcl "{c 149}"'"'
+in not found
+
+. loc dot `"`: di _char(149)'"'
+
+. di `"`dot'"'
+
+
+. di _char(149)
+
+
+. di _char(247)
+÷
+
+. loc div `: di _char(247)'
+
+. di `"`div'"'
+÷
+
+. do "/var/folders/px/cg4_66j52pvfn2z7pbjvb5d80000gn/T//SD01075.000000"
 
 . 
-. la var tch1pf "Pass/Fail Indicator Derived from Instructor 1 Total Difficulty"
-
-. la var tch2pf "Pass/Fail Indicator Derived from Instructor 1 Total Difficulty"
-
-. la var tch3pf "Pass/Fail Indicator Derived from Instructor 1 Total Difficulty"
-
-. la var angoffpf "Pass/Fail Indicator Derived using Angoff Threshold"
+. // Stores division character from extended ascii range in a local macro
+. loc div `: di _char(247)'
 
 . 
-. la var tch1dist "Difference of Observed Student Score and Instructor 1 Total Difficulty"
-
-. la var tch2dist "Difference of Observed Student Score and Instructor 1 Total Difficulty"
-
-. la var tch3dist "Difference of Observed Student Score and Instructor 1 Total Difficulty"
-
-. la var angoffdist "Difference of Observed Student Score and Angoff Threshold"
+. // Loads the data set containing the predicted pass/fail indicator, observed
+. // scores, and item judgments
+. import excel using ../data/raw.xlsx, clear first case(l)
 
 . 
-. qui: su score if pred == 0, de
-
-. loc fmed `r(p50)'
-
-. 
-. qui: su score if pred == 1, de
-
-. loc pmed `r(p50)'
+. // Recodes the predicted pass/fail indicator with a numeric value
+. qui: replace porf = cond(porf == "P", "1", cond(porf == "F", "0", ""))
 
 . 
-. loc contgr `= ((`pmed' - `fmed') / 2) + `fmed''
+. // Renames the variables from the original source
+. rename (inst1 studno studscor porf itemno itemjud)(inst1 stdid score pred        ///   
+> itemid itemdiff)
 
 . 
-. qui: g contgr = `contgr'
-
-. qui: g contgrpf = score >= contgr
-
-. qui: g contgrdist = score - contgr
+. // Recasts the predicted pass/fail indicator as a numeric type
+. qui: destring pred, replace
 
 . 
-. la val contgrpf passfail
-
-. la var contgr "Contrasting Groups Cutscore"
-
-. la var contgrpf "Pass/Fail Indicator Derived from Contrasting Groups Cutscore"
-
-. la var contgrdist "Difference of Observed Student Score and Contrasting Groups Cutscore"
+. // Defines a pass/fail value label (masking) that attributes the labels with the
+. // numeric values
+. la def passfail 0 "Fail" 1 "Pass", modify
 
 . 
-. #d ;
-delimiter now ;
-. tw      hist score, discrete width(1) start(0) fc(yellow%50) lc(black) lw(vthin) ||
->         kdensity score if pred == 0, lc(purple) lw(medthick) lp(solid) || 
->         kdensity score if pred == 1, lc(orange) lw(medthick) lp(solid) 
->         legend(region(lc(white)) nobox pos(12) rows(3) cols(1) size(small)
->                 label(1 "Observed Density")
->                 label(2 "Smoothed Predicted Failure") 
->                 label(3 "Smoothed Predicted Passing")) 
->         yti("Density", size(small)) xti("Observed Student Score", size(small)) 
->         xlab(#15, labsize(small)) xsca(range(0(1)15))
->         xline(`fmed', lc(black) lw(medthick) lp(dash))
->         xline(`contgr', lc(black) lw(medthick) lp(dot))
->         xline(`pmed', lc(black) lw(medthick) lp(dash))
->                 note(   "`fmed' = Predicted Failing Median - Dashed Black Line"
->                                 "`contgr' = Contrasting Groups Cutscore - Dotted Black Line"
->                                 "`pmed' = Predicted Passing Median - Dashed Black Line", c(black) size(vsmall))
->         ylab(, nogrid angle(0) labsize(small)) 
->         graphr(ic(white) lc(white) fc(white)) 
->         plotr(ic(white) lc(white) fc(white)) 
->         ti(     "Score Distributions Based On : " 
->                 "Contrasting Groups Based Cutscores", c(black) size(medlarge) span)
->         name(contrastingGroup, replace);
+. // Applies the passfail label to the values in the pred variable/column
+. la val pred passfail
 
-. tw      hist score, discrete width(1) start(0) fc(yellow%50) lc(black) lw(vthin) ||
->         kdensity score if angoffpf == 0, lc(purple) lw(medthick) lp(solid) || 
->         kdensity score if angoffpf == 1, lc(orange) lw(medthick) lp(solid) 
->         legend(region(lc(white)) nobox pos(12) rows(3) cols(1) size(small)
->                 label(1 "Observed Density")
->                 label(2 "Smoothed Predicted Failure") 
->                 label(3 "Smoothed Predicted Passing")) 
->         yti("Density", size(small)) xti("Observed Student Score", size(small)) 
->         xlab(#15, labsize(small)) xsca(range(0(1)15))
->         ylab(, nogrid angle(0) labsize(small)) 
->         graphr(ic(white) lc(white) fc(white)) 
->         plotr(ic(white) lc(white) fc(white)) 
->         ti(     "Score Distributions Based On : " 
->                 "Angoff Method Based Cutscores", c(black) size(medlarge) span)
->         name(angoff, replace);
+. 
+. // Creates a numeric teacher ID (needed because Mata does not include objects 
+. // that store text and numeric data in a single data frame like object
+. qui: g byte tchid = cond(inst1 == "A", 1, cond(inst1 == "B", 2, 3))
 
-. /*
-> tw      hist score, discrete width(1) start(0) fc(yellow) lc(black) lw(vthin) ||
->         kdensity score if tch1pf == 0, lc(purple) lw(medthick) lp(solid) || 
->         kdensity score if tch1pf == 1, lc(orange) lw(medthick) lp(solid) 
->         legend(region(lc(white)) nobox pos(12) rows(3) cols(1) size(small)
->                 label(1 "Observed Density")
->                 label(2 "Smoothed Predicted Failure") 
->                 label(3 "Smoothed Predicted Passing")) 
->         yti("Density", size(small)) xti("Observed Student Score", size(small)) 
->         xlab(#15, labsize(small)) xsca(range(0(1)15))
->         ylab(, nogrid angle(0) labsize(small)) 
->         graphr(ic(white) lc(white) fc(white)) 
->         plotr(ic(white) lc(white) fc(white)) 
->         ti(     "Score Distributions Based On : " 
->                 "Sum of Instructor 1 Estimated Item Difficulties", c(black) size(medlarge) span)
->         name(tch1, replace);
-> 
-> tw      hist score, discrete width(1) start(0) fc(yellow) lc(black) lw(vthin) ||
->         kdensity score if tch2pf == 0, lc(purple) lw(medthick) lp(solid) || 
->         kdensity score if tch2pf == 1, lc(orange) lw(medthick) lp(solid) 
->         legend(region(lc(white)) nobox pos(12) rows(3) cols(1) size(small)
->                 label(1 "Observed Density")
->                 label(2 "Smoothed Predicted Failure") 
->                 label(3 "Smoothed Predicted Passing")) 
->         yti("Density", size(small)) xti("Observed Student Score", size(small)) 
->         xlab(#15, labsize(small)) xsca(range(0(1)15))
->         ylab(, nogrid angle(0) labsize(small)) 
->         graphr(ic(white) lc(white) fc(white)) 
->         plotr(ic(white) lc(white) fc(white)) 
->         ti(     "Score Distributions Based On : " 
->                 "Sum of Instructor 2 Estimated Item Difficulties", c(black) size(medlarge) span)
->         name(tch2, replace);
-> 
-> tw      hist score, discrete width(1) start(0) fc(yellow) lc(black) lw(vthin) ||
->         kdensity score if tch3pf == 0, lc(purple) lw(medthick) lp(solid) || 
->         kdensity score if tch3pf == 1, lc(orange) lw(medthick) lp(solid) 
->         legend(region(lc(white)) nobox pos(12) rows(3) cols(1) size(small)
->                 label(1 "Observed Density")
->                 label(2 "Smoothed Predicted Failure") 
->                 label(3 "Smoothed Predicted Passing")) 
->         yti("Density", size(small)) xti("Observed Student Score", size(small)) 
->         xlab(#15, labsize(small)) xsca(range(0(1)15))
->         ylab(, nogrid angle(0) labsize(small)) 
->         graphr(ic(white) lc(white) fc(white)) 
->         plotr(ic(white) lc(white) fc(white)) 
->         ti(     "Score Distributions Based On : " 
->                 "Sum of Instructor 3 Estimated Item Difficulties", c(black) size(medlarge) span)
->         name(tch3, replace);
+. 
+. // Starts the Mata interpreter
+. mata:
+------------------------------------------------- mata (type end to exit) ----------------------------------------------------------
+: 
+:         // Creates the object named angoff by selecting all of the non-missing values
+:         // across the last three columns/variables in the data set (e.g., the item 
+:         // judgments from the three instructors)
+:         angoff = select(st_data(., (4..6)), rowmissing(st_data(., (4..6))) :== 0)
+
+:         
+:         // Defines a container object to store the individual instructor cutscores 
+:         // and the cutscore defined by averaging over these ratings
+:         cutscores = J(1, 4, .)
+
+:         
+:         // Loop over the values that identify individual instructors
+:         for( i = 1; i <= 3; i++) {
 >         
-> gr combine tch1 tch2 tch3, name(tchcombo, replace)
->         graphr(ic(white) lc(white) fc(white)) 
->         plotr(ic(white) lc(white) fc(white)) ;
+>                 // Replace the corresponding columns in the cutscores matrix with the 
+>                 // sum of the item probabilities for each instructor
+>                 cutscores[1, i] = colsum(select(angoff[., 2], angoff[., 3] :== i))
+>                 
+>         } // End of Loop
+
+:         
+:         // Averages the sum of the item probabilities across the instructors
+:         cutscores[1, 4] = rowsum(cutscores[1, 1..3]) / 3
+
+:         
+:         // Creates a Stata matrix named cutscores that contains these values
+:         st_matrix("cutscores", cutscores)
+
+:         
+:         // Creates an object to store the ratings from rater # 1
+:         r1 = select(angoff[., (1..2)], angoff[., 3] :== 1)
+
+:         
+:         // Creates an object to store the ratings from rater # 2
+:         r2 = select(angoff[., (1..2)], angoff[., 3] :== 2)
+
+:         
+:         // Creates an object to store the ratings from rater # 3
+:         r3 = select(angoff[., (1..2)], angoff[., 3] :== 3)
+
+:         
+:         // Average item probability for instructor # 1
+:         mu1 = mean(r1[., 2])
+
+:         
+:         // Average item probability for instructor # 2
+:         mu2 = mean(r2[., 2])
+
+:         
+:         // Average item probability for instructor # 3
+:         mu3 = mean(r3[., 2])
+
+:         
+:         // Standard deviation of item probabilities for instructor # 1
+:         sigma1 = sqrt(variance(r1[., 2]))
+
+:         
+:         // Standard deviation of item probabilities for instructor # 2
+:         sigma2 = sqrt(variance(r2[., 2]))
+
+:         
+:         // Standard deviation of item probabilities for instructor # 3
+:         sigma3 = sqrt(variance(r3[., 2]))
+
+:         
+:         // Creates a container matrix to store the probabilities across columns
+:         items = J(3, 13, .)
+
+:         
+:         // Container to store the standard deviations of each item
+:         sigmaitems = J(1, 13, .)
+
+:         
+:         // Loops over the item indexes 
+:         for(i = 1; i <= 13; i++) {
+>         
+>                 // Populates the ith column in the 1st row (Instructor 1) with the 
+>                 // Probability of the ith item
+>                 items[1, i] = r1[i, 2]
 > 
-> */
+>                 // Populates the ith column in the 2nd row (Instructor 2) with the 
+>                 // Probability of the ith item
+>                 items[2, i] = r2[i, 2]
 > 
-> gr combine contrastingGroup angoff, name(methodcombo, replace) 
->         graphr(ic(white) lc(white) fc(white)) 
->         plotr(ic(white) lc(white) fc(white)) ;
-
-.         #d cr   
-delimiter now cr
-. 
-. foreach v in contrastingGroup angoff methodcombo {
-  2.         qui: gr export graphs/`v'.pdf, as(pdf) name(`v') replace
-  3. }
-
-. 
-. estout m(raters) using results/table1.rtf, mlabels(, none)                                       ///   
-> ti("Table 1. Average and Standard Deviation of Raters' Ratings") replace
-(note: file results/table1.rtf not found)
-(output written to results/table1.rtf)
-
-. 
-. estout m(items) using results/table2.rtf, mlabels(, none)                                        ///   
-> ti("Table 2. Average and Standard Deviation of Item Ratings") replace
-(note: file results/table2.rtf not found)
-(output written to results/table2.rtf)
-
-. 
-. di _n "Score Summary Statistics"
-
-Score Summary Statistics
-
-. estpost tabstat score, by(tchid) c(v) s(n mean sd min p25 p50 p75 max)
-
-Summary statistics: count mean sd min p25 p50 p75 max
-     for variables: score
-  by categories of: tchid
-
-       tchid |  e(score) 
--------------+-----------
-1            |           
-       count |        17 
-        mean |  5.411765 
-          sd |  1.502449 
-         min |         3 
-         p25 |         4 
-         p50 |         5 
-         p75 |         6 
-         max |         8 
--------------+-----------
-2            |           
-       count |        29 
-        mean |  6.172414 
-          sd |  2.916321 
-         min |         2 
-         p25 |         4 
-         p50 |         6 
-         p75 |         8 
-         max |        13 
--------------+-----------
-3            |           
-       count |         8 
-        mean |       5.5 
-          sd |  2.390457 
-         min |         3 
-         p25 |         4 
-         p50 |         4 
-         p75 |         8 
-         max |         9 
--------------+-----------
-Total        |           
-       count |        54 
-        mean |  5.833333 
-          sd |  2.462933 
-         min |         2 
-         p25 |         4 
-         p50 |         5 
-         p75 |         8 
-         max |        13 
-
-. 
-. esttab . using results/table3.rtf, main(score) unstack wide mlabels("Instructors", noti) nonum           ///   
-> ren(count "# of Students" mean "Average Score" sd "Standard Deviation"           ///   
-> min Minimum p25 "25th %ile" p50 Median p75 "75th %ile" max Maximum) noobs        ///   
-> ti("Table 3.  Summary of Observed Scores Within and Between Instructors") nonote replace
-(note: file results/table3.rtf not found)
-(output written to results/table3.rtf)
-
-. 
-. di _n "Within Instructor Comparison of Angoff and Contrasting Groups Classifications"
-
-Within Instructor Comparison of Angoff and Contrasting Groups Classifications
-
-. 
-. forv i = 1/3 {
-  2.         estpost ta contgrpf angoffpf if tchid == `i', exact elabels
-  3.         
-.         esttab . using results/table`= 3 + `i''.rtf, cells(b) unstack varlabels(`e(labels)') eqlabels(`e(eqlabels)') collabel(, no
-> ne) mlabel("Pass/Fail Derived from Angoff Cutscore") stats(p_exact, labels("Fisher Exact Test")) replace ti("Table . Contrasting G
-> roups vs Angoff Classifications for Students in Instructor `i''s class.")
-  4.         
-. }
-
-           Fisher's exact =                 0.029
-   1-sided Fisher's exact =                 0.029
-
-angoffpf     |                                            
-    contgrpf |      e(b)     e(pct)  e(colpct)  e(rowpct) 
--------------+--------------------------------------------
-0            |                                            
-           0 |         9   52.94118   69.23077        100 
-           1 |         4   23.52941   30.76923         50 
-       Total |        13   76.47059        100   76.47059 
--------------+--------------------------------------------
-1            |                                            
-           0 |         0          0          0          0 
-           1 |         4   23.52941        100         50 
-       Total |         4   23.52941        100   23.52941 
--------------+--------------------------------------------
-Total        |                                            
-           0 |         9   52.94118   52.94118        100 
-           1 |         8   47.05882   47.05882        100 
-       Total |        17        100        100        100 
-
-row labels saved in macro e(labels)
-column labels saved in macro e(eqlabels)
-(note: file results/table4.rtf not found)
-(output written to results/table4.rtf)
-
-           Fisher's exact =                 0.000
-   1-sided Fisher's exact =                 0.000
-
-angoffpf     |                                            
-    contgrpf |      e(b)     e(pct)  e(colpct)  e(rowpct) 
--------------+--------------------------------------------
-0            |                                            
-           0 |        14   48.27586       87.5        100 
-           1 |         2   6.896552       12.5   13.33333 
-       Total |        16   55.17241        100   55.17241 
--------------+--------------------------------------------
-1            |                                            
-           0 |         0          0          0          0 
-           1 |        13   44.82759        100   86.66667 
-       Total |        13   44.82759        100   44.82759 
--------------+--------------------------------------------
-Total        |                                            
-           0 |        14   48.27586   48.27586        100 
-           1 |        15   51.72414   51.72414        100 
-       Total |        29        100        100        100 
-
-row labels saved in macro e(labels)
-column labels saved in macro e(eqlabels)
-(note: file results/table5.rtf not found)
-(output written to results/table5.rtf)
-
-           Fisher's exact =                 0.018
-   1-sided Fisher's exact =                 0.018
-
-angoffpf     |                                            
-    contgrpf |      e(b)     e(pct)  e(colpct)  e(rowpct) 
--------------+--------------------------------------------
-0            |                                            
-           0 |         5       62.5        100        100 
-           1 |         0          0          0          0 
-       Total |         5       62.5        100       62.5 
--------------+--------------------------------------------
-1            |                                            
-           0 |         0          0          0          0 
-           1 |         3       37.5        100        100 
-       Total |         3       37.5        100       37.5 
--------------+--------------------------------------------
-Total        |                                            
-           0 |         5       62.5       62.5        100 
-           1 |         3       37.5       37.5        100 
-       Total |         8        100        100        100 
-
-row labels saved in macro e(labels)
-column labels saved in macro e(eqlabels)
-(note: file results/table6.rtf not found)
-(output written to results/table6.rtf)
-
-. 
-. di _n "Between Instructor Comparison of Angoff and Contrasting Groups Classifications"
-
-Between Instructor Comparison of Angoff and Contrasting Groups Classifications
-
-. estpost ta contgrpf angoffpf, exact elabels
-
-           Fisher's exact =                 0.000
-   1-sided Fisher's exact =                 0.000
-
-angoffpf     |                                            
-    contgrpf |      e(b)     e(pct)  e(colpct)  e(rowpct) 
--------------+--------------------------------------------
-0            |                                            
-           0 |        28   51.85185   82.35294        100 
-           1 |         6   11.11111   17.64706   23.07692 
-       Total |        34   62.96296        100   62.96296 
--------------+--------------------------------------------
-1            |                                            
-           0 |         0          0          0          0 
-           1 |        20   37.03704        100   76.92308 
-       Total |        20   37.03704        100   37.03704 
--------------+--------------------------------------------
-Total        |                                            
-           0 |        28   51.85185   51.85185        100 
-           1 |        26   48.14815   48.14815        100 
-       Total |        54        100        100        100 
-
-row labels saved in macro e(labels)
-column labels saved in macro e(eqlabels)
-
-. 
-. esttab . using results/table7.rtf, cells(b) unstack varlabels(`e(labels)') eqlabels(`e(eqlabels)') collabel(, none) mlabel("Pass/F
-> ail Derived from Angoff Cutscore") stats(p_exact, labels("Fisher Exact Test")) replace ti("Table . Contrasting Groups vs Angoff Cl
-> assifications for All Students.")
-(note: file results/table7.rtf not found)
-(output written to results/table7.rtf)
-
-. 
-. di _n "Correlation of Contrasting Groups and Angoff Cut Scores and Predicted Pass/Fail"
-
-Correlation of Contrasting Groups and Angoff Cut Scores and Predicted Pass/Fail
-
-. tetrachoric angoffpf contgrpf pred, posdef 
-(obs=53)
-
-matrix with tetrachoric correlations is not positive semidefinite;
-  it has 1 negative eigenvalue
-  maxdiff(corr,adj-corr) =  0.0252
-  (adj-corr: tetrachoric correlations adjusted to be positive semidefinite)
-
-    adj-corr | angoffpf contgrpf     pred
--------------+---------------------------
-    angoffpf |   1.0000 
-    contgrpf |   0.9748   1.0000 
-        pred |   0.6374   0.4497   1.0000 
-
-. 
-. logit pred score
-
-Iteration 0:   log likelihood = -36.273183  
-Iteration 1:   log likelihood = -33.144232  
-Iteration 2:   log likelihood = -33.125639  
-Iteration 3:   log likelihood = -33.125632  
-Iteration 4:   log likelihood = -33.125632  
-
-Logistic regression                             Number of obs     =         53
-                                                LR chi2(1)        =       6.30
-                                                Prob > chi2       =     0.0121
-Log likelihood = -33.125632                     Pseudo R2         =     0.0868
-
-------------------------------------------------------------------------------
-        pred |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-       score |    .319296    .139803     2.28   0.022     .0452871    .5933049
-       _cons |  -1.529436   .8158259    -1.87   0.061    -3.128426    .0695532
-------------------------------------------------------------------------------
-
-. esttab . using results/table8.rtf, label cells("b(star) se(par)") nonum          ///   
-> ti("Table .  Logistic Regression of Predicted Pass/Fail on Observed Test Scores") ///   
-> replace
-(note: file results/table8.rtf not found)
-(output written to results/table8.rtf)
-
-. 
-. margins, at(score=(0(1)15)) post
-
-Adjusted predictions                            Number of obs     =         53
-Model VCE    : OIM
-
-Expression   : Pr(pred), predict()
-
-1._at        : score           =           0
-
-2._at        : score           =           1
-
-3._at        : score           =           2
-
-4._at        : score           =           3
-
-5._at        : score           =           4
-
-6._at        : score           =           5
-
-7._at        : score           =           6
-
-8._at        : score           =           7
-
-9._at        : score           =           8
-
-10._at       : score           =           9
-
-11._at       : score           =          10
-
-12._at       : score           =          11
-
-13._at       : score           =          12
-
-14._at       : score           =          13
-
-15._at       : score           =          14
-
-16._at       : score           =          15
-
-------------------------------------------------------------------------------
-             |            Delta-method
-             |     Margin   Std. Err.      z    P>|z|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-         _at |
-          1  |   .1780762   .1194084     1.49   0.136      -.05596    .4121124
-          2  |   .2296762   .1215952     1.89   0.059     -.008646    .4679985
-          3  |   .2909356   .1163672     2.50   0.012     .0628602    .5190111
-          4  |   .3608796   .1039553     3.47   0.001     .1571309    .5646284
-          5  |   .4372692   .0877526     4.98   0.000     .2652772    .6092612
-          6  |   .5167546   .0750436     6.89   0.000     .3696719    .6638373
-          7  |   .5954012   .0732758     8.13   0.000     .4517832    .7390192
-          8  |    .669436   .0809545     8.27   0.000     .5107681     .828104
-          9  |   .7359321   .0899475     8.18   0.000     .5596382     .912226
-         10  |   .7931843    .094764     8.37   0.000     .6074503    .9789182
-         11  |   .8407104     .09396     8.95   0.000     .6565522    1.024869
-         12  |   .8789814   .0883571     9.95   0.000     .7058047    1.052158
-         13  |   .9090521    .079589    11.42   0.000     .7530606    1.065044
-         14  |   .9322269   .0692837    13.46   0.000     .7964335     1.06802
-         15  |   .9498224   .0587103    16.18   0.000     .8347523    1.064893
-         16  |   .9630309   .0487052    19.77   0.000     .8675705    1.058491
-------------------------------------------------------------------------------
-
-. 
-. esttab . using results/table9.rtf, cells(b(star) se(par)) rename(1._at 1 2._at 2 3._at 3 4._at 4 5._at 5 6._at 6 7._at 7 8._at 8 9
-> ._at 9 10._at 10 11._at 11 12._at 12 13._at 13 14._at 14 15._at 15 16._at 16) nonum mti("Marginal Effects") collabel(, none) noobs
->  note("Standard Errors in Parentheses") ti("Table .  Predicted Probabilities by Observed Score") replace
-(note: file results/table9.rtf not found)
-(output written to results/table9.rtf)
-
-. 
-. marginsplot, recastci(rarea) ylab(0(0.1)1, angle(0) nogrid) yti("Pr(Pass)", c(black) size(small)) graphr(ic(white) fc(white) lc(wh
-> ite)) plotr(ic(white) fc(white) lc(white)) ciopts(lc(black) lw(vthin) fc(yellow%50)) plotop(mc(purple) mlw(vvthin) mlc(black) lc(p
-> urple) lw(medium)) ti("Instructor Predicted Passing vs" "Observed Test Score", c(black) size(medlarge) span) name(margplot, replac
-> e)
-
-  Variables that uniquely identify margins: score
-
-. 
-. gr export graphs/logisticMarginalEffects.pdf, as(pdf) name(margplot) replace
-(file /Users/billy/Desktop/Articles/JEM/src/graphs/logisticMarginalEffects.pdf written in PDF format)
-
-. 
-. log c _all
-      name:  jemlog
-       log:  /Users/billy/Desktop/Articles/JEM/src/logs/JEMlogs.txt
-  log type:  text
- closed on:  30 Nov 2017, 23:22:58
+>                 // Populates the ith column in the 3rd row (Instructor 3) with the 
+>                 // Probability of the ith item
+>                 items[3, i] = r3[i, 2]
+>                 
+>                 // Gets the standard deviation of item probabilities across instructors
+>                 sigmaitems[1, i] = sqrt(variance(items[., i]))
+>                 
+>         } // End of Loop
+                 <istmt>:  3301  subscript invalid
+(19 lines skipped)
 ------------------------------------------------------------------------------------------------------------------------------------
+r(3301);
+
+end of do-file
+
+r(3301);
+
+. clear
+
+. cls
+
+. discard
+
+. do "/var/folders/px/cg4_66j52pvfn2z7pbjvb5d80000gn/T//SD01075.000000"
+
+. // Stores division character from extended ascii range in a local macro
+. loc div `: di _char(247)'
+
+. 
+. // Loads the data set containing the predicted pass/fail indicator, observed
+. // scores, and item judgments
+. import excel using ../data/raw.xlsx, clear first case(l)
+
+. 
+. // Recodes the predicted pass/fail indicator with a numeric value
+. qui: replace porf = cond(porf == "P", "1", cond(porf == "F", "0", ""))
+
+. 
+. // Renames the variables from the original source
+. rename (inst1 studno studscor porf itemno itemjud)(inst1 stdid score pred        ///   
+> itemid itemdiff)
+
+. 
+. // Recasts the predicted pass/fail indicator as a numeric type
+. qui: destring pred, replace
+
+. 
+. // Defines a pass/fail value label (masking) that attributes the labels with the
+. // numeric values
+. la def passfail 0 "Fail" 1 "Pass", modify
+
+. 
+. // Applies the passfail label to the values in the pred variable/column
+. la val pred passfail
+
+. 
+. // Creates a numeric teacher ID (needed because Mata does not include objects 
+. // that store text and numeric data in a single data frame like object
+. qui: g byte tchid = cond(inst1 == "A", 1, cond(inst1 == "B", 2, 3))
+
+. 
+. // Starts the Mata interpreter
+. mata:
+------------------------------------------------- mata (type end to exit) ----------------------------------------------------------
+: 
+:         // Creates the object named angoff by selecting all of the non-missing values
+:         // across the last three columns/variables in the data set (e.g., the item 
+:         // judgments from the three instructors)
+:         angoff = select(st_data(., (4..6)), rowmissing(st_data(., (4..6))) :== 0)
+
+:         
+:         // Defines a container object to store the individual instructor cutscores 
+:         // and the cutscore defined by averaging over these ratings
+:         cutscores = J(1, 4, .)
+
+:         
+:         // Loop over the values that identify individual instructors
+:         for( i = 1; i <= 3; i++) {
+>         
+>                 // Replace the corresponding columns in the cutscores matrix with the 
+>                 // sum of the item probabilities for each instructor
+>                 cutscores[1, i] = colsum(select(angoff[., 2], angoff[., 3] :== i))
+>                 
+>         } // End of Loop
+
+:         
+:         // Averages the sum of the item probabilities across the instructors
+:         cutscores[1, 4] = rowsum(cutscores[1, 1..3]) / 3
+
+:         
+:         // Creates a Stata matrix named cutscores that contains these values
+:         st_matrix("cutscores", cutscores)
+
+:         
+:         // Creates an object to store the ratings from rater # 1
+:         r1 = select(angoff[., (1..2)], angoff[., 3] :== 1)
+
+:         
+:         // Creates an object to store the ratings from rater # 2
+:         r2 = select(angoff[., (1..2)], angoff[., 3] :== 2)
+
+:         
+:         // Creates an object to store the ratings from rater # 3
+:         r3 = select(angoff[., (1..2)], angoff[., 3] :== 3)
+
+:         
+:         // Average item probability for instructor # 1
+:         mu1 = mean(r1[., 2])
+
+:         
+:         // Average item probability for instructor # 2
+:         mu2 = mean(r2[., 2])
+
+:         
+:         // Average item probability for instructor # 3
+:         mu3 = mean(r3[., 2])
+
+:         
+:         // Standard deviation of item probabilities for instructor # 1
+:         sigma1 = sqrt(variance(r1[., 2]))
+
+:         
+:         // Standard deviation of item probabilities for instructor # 2
+:         sigma2 = sqrt(variance(r2[., 2]))
+
+:         
+:         // Standard deviation of item probabilities for instructor # 3
+:         sigma3 = sqrt(variance(r3[., 2]))
+
+:         
+:         // Creates a container matrix to store the probabilities across columns
+:         items = J(3, 13, .)
+
+:         
+:         // Container to store the standard deviations of each item
+:         sigmaitems = J(1, 13, .)
+
+:         
+:         // Loops over the item indexes 
+:         for(i = 1; i <= 13; i++) {
+>         
+>                 // Populates the ith column in the 1st row (Instructor 1) with the 
+>                 // Probability of the ith item
+>                 items[1, i] = r1[i, 2]
+> 
+>                 // Populates the ith column in the 2nd row (Instructor 2) with the 
+>                 // Probability of the ith item
+>                 items[2, i] = r2[i, 2]
+> 
+>                 // Populates the ith column in the 3rd row (Instructor 3) with the 
+>                 // Probability of the ith item
+>                 items[3, i] = r3[i, 2]
+>                 
+>                 // Gets the standard deviation of item probabilities across instructors
+>                 sigmaitems[1, i] = sqrt(variance(items[., i]))
+>                 
+>         } // End of Loop
+                 <istmt>:  3301  subscript invalid
+(19 lines skipped)
+------------------------------------------------------------------------------------------------------------------------------------
+r(3301);
+
+end of do-file
+
+r(3301);
+
+. do "/var/folders/px/cg4_66j52pvfn2z7pbjvb5d80000gn/T//SD01075.000000"
+
+. // Stores division character from extended ascii range in a local macro
+. loc div `: di _char(247)'
+
+. 
+. // Loads the data set containing the predicted pass/fail indicator, observed
+. // scores, and item judgments
+. import excel using ../data/raw.xlsx, clear first case(l)
+
+. 
+. // Recodes the predicted pass/fail indicator with a numeric value
+. qui: replace porf = cond(porf == "P", "1", cond(porf == "F", "0", ""))
+
+. 
+. // Renames the variables from the original source
+. rename (inst1 studno studscor porf itemno itemjud)(inst1 stdid score pred        ///   
+> itemid itemdiff)
+
+. 
+. // Recasts the predicted pass/fail indicator as a numeric type
+. qui: destring pred, replace
+
+. 
+. // Defines a pass/fail value label (masking) that attributes the labels with the
+. // numeric values
+. la def passfail 0 "Fail" 1 "Pass", modify
+
+. 
+. // Applies the passfail label to the values in the pred variable/column
+. la val pred passfail
+
+. 
+. // Creates a numeric teacher ID (needed because Mata does not include objects 
+. // that store text and numeric data in a single data frame like object
+. qui: g byte tchid = cond(inst1 == "A", 1, cond(inst1 == "B", 2, 3))
+
+. 
+. // Starts the Mata interpreter
+. mata:
+------------------------------------------------- mata (type end to exit) ----------------------------------------------------------
+: 
+:         // Creates the object named angoff by selecting all of the non-missing values
+:         // across the last three columns/variables in the data set (e.g., the item 
+:         // judgments from the three instructors)
+:         angoff = select(st_data(., (4..6)), rowmissing(st_data(., (4..6))) :== 0)
+
+:         
+:         // Defines a container object to store the individual instructor cutscores 
+:         // and the cutscore defined by averaging over these ratings
+:         cutscores = J(1, 4, .)
+
+:         
+:         // Loop over the values that identify individual instructors
+:         for( i = 1; i <= 3; i++) {
+>         
+>                 // Replace the corresponding columns in the cutscores matrix with the 
+>                 // sum of the item probabilities for each instructor
+>                 cutscores[1, i] = colsum(select(angoff[., 2], angoff[., 3] :== i))
+>                 
+>         } // End of Loop
+
+:         
+:         // Averages the sum of the item probabilities across the instructors
+:         cutscores[1, 4] = rowsum(cutscores[1, 1..3]) / 3
+
+:         
+:         // Creates a Stata matrix named cutscores that contains these values
+:         st_matrix("cutscores", cutscores)
+
+:         
+:         // Creates an object to store the ratings from rater # 1
+:         r1 = select(angoff[., (1..2)], angoff[., 3] :== 1)
+
+:         
+:         // Creates an object to store the ratings from rater # 2
+:         r2 = select(angoff[., (1..2)], angoff[., 3] :== 2)
+
+:         
+:         // Creates an object to store the ratings from rater # 3
+:         r3 = select(angoff[., (1..2)], angoff[., 3] :== 3)
+
+:         
+:         // Average item probability for instructor # 1
+:         mu1 = mean(r1[., 2])
+
+:         
+:         // Average item probability for instructor # 2
+:         mu2 = mean(r2[., 2])
+
+:         
+:         // Average item probability for instructor # 3
+:         mu3 = mean(r3[., 2])
+
+:         
+:         // Standard deviation of item probabilities for instructor # 1
+:         sigma1 = sqrt(variance(r1[., 2]))
+
+:         
+:         // Standard deviation of item probabilities for instructor # 2
+:         sigma2 = sqrt(variance(r2[., 2]))
+
+:         
+:         // Standard deviation of item probabilities for instructor # 3
+:         sigma3 = sqrt(variance(r3[., 2]))
+
+:         
+:         // Creates a container matrix to store the probabilities across columns
+:         items = J(3, 13, .)
+
+:         
+:         // Container to store the standard deviations of each item
+:         sigmaitems = J(1, 13, .)
+
+:         
+:         // Loops over the item indexes 
+:         for(i = 1; i <= 13; i++) {
+>         
+>                 // Populates the ith column in the 1st row (Instructor 1) with the 
+>                 // Probability of the ith item
+>                 items[1, i] = r1[i, 2]
+> 
+>                 // Populates the ith column in the 2nd row (Instructor 2) with the 
+>                 // Probability of the ith item
+>                 items[2, i] = r2[i, 2]
+> 
+>                 // Populates the ith column in the 3rd row (Instructor 3) with the 
+>                 // Probability of the ith item
+>                 items[3, i] = r3[i, 2]
+>                                 
+>         } // End of Loop
+                 <istmt>:  3301  subscript invalid
+(27 lines skipped)
+------------------------------------------------------------------------------------------------------------------------------------
+r(3301);
+
+end of do-file
+
+r(3301);
+
+. mata
+------------------------------------------------- mata (type end to exit) ----------------------------------------------------------
+: r1
+
+: r2
+
+: clear
+                 <istmt>:  3499  clear not found
+r(3499);
+
+: end
+------------------------------------------------------------------------------------------------------------------------------------
+
+. clear
+
+. discard
+
+. prog drop _all
+
+. cls
+
+. do "/var/folders/px/cg4_66j52pvfn2z7pbjvb5d80000gn/T//SD01075.000000"
+
+. import excel using ../data/raw.xlsx, clear first case(l)
+
+. 
+. // Recodes the predicted pass/fail indicator with a numeric value
+. qui: replace porf = cond(porf == "P", "1", cond(porf == "F", "0", ""))
+
+. 
+. // Renames the variables from the original source
+. rename (inst1 studno studscor porf itemno itemjud)(inst1 stdid score pred        ///   
+> itemid itemdiff)
+
+. 
+. // Recasts the predicted pass/fail indicator as a numeric type
+. qui: destring pred, replace
+
+. 
+. // Defines a pass/fail value label (masking) that attributes the labels with the
+. // numeric values
+. la def passfail 0 "Fail" 1 "Pass", modify
+
+. 
+. // Applies the passfail label to the values in the pred variable/column
+. la val pred passfail
+
+. 
+. // Creates a numeric teacher ID (needed because Mata does not include objects 
+. // that store text and numeric data in a single data frame like object
+. qui: g byte tchid = cond(inst1 == "A", 1, cond(inst1 == "B", 2, 3))
+
+. 
+end of do-file
+
+. mata
+------------------------------------------------- mata (type end to exit) ----------------------------------------------------------
+: angoff = select(st_data(., (4..6)), rowmissing(st_data(., (4..6))) :== 0)
+
+: cutscores = J(1, 4, .)
+
+: for( i = 1; i <= 3; i++) {
+> cutscores[1, i] = colsum(select(angoff[., 2], angoff[., 3] :== i))
+> }
+
+: cutscores[1, 4] = rowsum(cutscores[1, 1..3]) / 3
+
+: st_matrix("cutscores", cutscores)
+
+: r1 = select(angoff[., (1..2)], angoff[., 3] :== 1)
+
+: r2 = select(angoff[., (1..2)], angoff[., 3] :== 2)
+
+: r3 = select(angoff[., (1..2)], angoff[., 3] :== 3)
+
+: mu1 = mean(r1[., 2])
+
+: mu2 = mean(r2[., 2])
+
+: mu3 = mean(r3[., 2])
+
+: sigma1 = sqrt(variance(r1[., 2]))
+
+: sigma2 = sqrt(variance(r2[., 2]))
+
+: sigma3 = sqrt(variance(r3[., 2]))
+
+: items = J(3, 13, .)
+
+: sigmaitems = J(1, 13, .)
+
+: for(i = 1; i <= 13; i++) {
+> items[1, i] = r1[i, 2]
+> items[2, i] = r2[i, 2]
+> items[3, i] = r3[i, 2]
+> }
+                 <istmt>:  3301  subscript invalid
+r(3301);
+
+: muitems = mean(items)
+
+: for(i = 1; i <= 13; i++) {
+> sigmaitems[1, i] = sqrt(variance(items[., i]))
+> }
+
+: itemsummary = (muitems', sigmaitems')
+
+: ratersummary = (mu1, sigma1 \ mu2, sigma2 \ mu3, sigma3)
+
+: st_matrix("items", itemsummary)
+
+: st_matrix("raters", ratersummary)
+
+: r1
+
+: angoff
+          1     2     3
+     +-------------------+
+   1 |    1     1    .7  |
+   2 |    1     2   .45  |
+   3 |    0     3    .6  |
+   4 |    0     4    .4  |
+   5 |    0     5    .4  |
+   6 |    0     6   .35  |
+   7 |    1     7   .35  |
+   8 |    1     8   .35  |
+   9 |    0     9    .3  |
+  10 |    0    10    .3  |
+  11 |    0    11    .3  |
+  12 |    0    12   .25  |
+  13 |    1     1    .8  |
+  14 |    0     2    .5  |
+  15 |    1     3    .5  |
+  16 |    1     4    .3  |
+  17 |    1     5    .4  |
+  18 |    1     6    .8  |
+  19 |    1     7    .6  |
+  20 |    0     8    .3  |
+  21 |    1     9    .5  |
+  22 |    0    10    .3  |
+  23 |    1    11    .5  |
+  24 |    0    12    .6  |
+  25 |    1    13    .3  |
+  26 |    1     1    .9  |
+  27 |    1     2    .8  |
+  28 |    1     3    .7  |
+  29 |    1     4    .7  |
+  30 |    1     5    .8  |
+  31 |    1     6    .8  |
+  32 |    0     7    .7  |
+  33 |    1     8    .7  |
+     +-------------------+
+
+: angoff = select(st_data(., (5..7)), rowmissing(st_data(., (5..7))) :== 0)
+
+: angoff
+          1     2     3
+     +-------------------+
+   1 |    1    .7     1  |
+   2 |    2   .45     1  |
+   3 |    3    .6     1  |
+   4 |    4    .4     1  |
+   5 |    5    .4     1  |
+   6 |    6   .35     1  |
+   7 |    7   .35     1  |
+   8 |    8   .35     1  |
+   9 |    9    .3     1  |
+  10 |   10    .3     1  |
+  11 |   11    .3     1  |
+  12 |   12   .25     1  |
+  13 |   13   .25     1  |
+  14 |    1    .8     2  |
+  15 |    2    .5     2  |
+  16 |    3    .5     2  |
+  17 |    4    .3     2  |
+  18 |    5    .4     2  |
+  19 |    6    .8     2  |
+  20 |    7    .6     2  |
+  21 |    8    .3     2  |
+  22 |    9    .5     2  |
+  23 |   10    .3     2  |
+  24 |   11    .5     2  |
+  25 |   12    .6     2  |
+  26 |   13    .3     2  |
+  27 |    1    .9     3  |
+  28 |    2    .8     3  |
+  29 |    3    .7     3  |
+  30 |    4    .7     3  |
+  31 |    5    .8     3  |
+  32 |    6    .8     3  |
+  33 |    7    .7     3  |
+  34 |    8    .7     3  |
+  35 |    9    .7     3  |
+  36 |   10    .7     3  |
+  37 |   11    .7     3  |
+  38 |   12    .6     3  |
+  39 |   13    .8     3  |
+     +-------------------+
+
+: for( i = 1; i <= 3; i++) {
+> cutscores[1, i] = colsum(select(angoff[., 2], angoff[., 3] :== i))
+> }
+
+: cutscores[1, 4] = rowsum(cutscores[1, 1..3]) / 3
+
+: st_matrix("cutscores", cutscores)
+
+: r1 = select(angoff[., (1..2)], angoff[., 3] :== 1)
+
+: r2 = select(angoff[., (1..2)], angoff[., 3] :== 2)
+
+: r3 = select(angoff[., (1..2)], angoff[., 3] :== 3)
+
+: mu1 = mean(r1[., 2])
+
+: mu2 = mean(r2[., 2])
+
+: mu3 = mean(r3[., 2])
+
+: sigma1 = sqrt(variance(r1[., 2]))
+
+: sigma2 = sqrt(variance(r2[., 2]))
+
+: sigma3 = sqrt(variance(r3[., 2]))
+
+: items = J(3, 13, .)
+
+: sigmaitems = J(1, 13, .)
+
+: for(i = 1; i <= 13; i++) {
+> items[1, i] = r1[i, 2]
+> items[2, i] = r2[i, 2]
+> items[3, i] = r3[i, 2]
+> }
+
+: muitems = mean(items)
+
+: for(i = 1; i <= 13; i++) {
+> sigmaitems[1, i] = sqrt(variance(items[., i]))
+> }
+
+: itemsummary = (muitems', sigmaitems')
+
+: ratersummary = (mu1, sigma1 \ mu2, sigma2 \ mu3, sigma3)
+
+: st_matrix("items", itemsummary)
+
+: st_matrix("raters", ratersummary)
+
+: items
+         1     2     3     4     5     6     7     8     9    10    11    12    13
+    +-------------------------------------------------------------------------------+
+  1 |   .7   .45    .6    .4    .4   .35   .35   .35    .3    .3    .3   .25   .25  |
+  2 |   .8    .5    .5    .3    .4    .8    .6    .3    .5    .3    .5    .6    .3  |
+  3 |   .9    .8    .7    .7    .8    .8    .7    .7    .7    .7    .7    .6    .8  |
+    +-------------------------------------------------------------------------------+
+
+: raters
+                 <istmt>:  3499  raters not found
+r(3499);
+
+: ratersummary
+                 1             2
+    +-----------------------------+
+  1 |  .3846153846   .1328918975  |
+  2 |  .4923076923   .1754116039  |
+  3 |  .7384615385   .0767947648  |
+    +-----------------------------+
+
+: end
+------------------------------------------------------------------------------------------------------------------------------------
+
+. clear
+
+. discard
+
+. cls
+
+. do "/var/folders/px/cg4_66j52pvfn2z7pbjvb5d80000gn/T//SD01075.000000"
+
+. loc div `: di _char(247)'
+
+. 
+. // Loads the data set containing the predicted pass/fail indicator, observed
+. // scores, and item judgments
+. import excel using ../data/raw.xlsx, clear first case(l)
+
+. 
+. // Recodes the predicted pass/fail indicator with a numeric value
+. qui: replace porf = cond(porf == "P", "1", cond(porf == "F", "0", ""))
+
+. 
+. // Renames the variables from the original source
+. rename (inst1 studno studscor porf itemno itemjud)(inst1 stdid score pred        ///   
+> itemid itemdiff)
+
+. 
+. // Recasts the predicted pass/fail indicator as a numeric type
+. qui: destring pred, replace
+
+. 
+. // Defines a pass/fail value label (masking) that attributes the labels with the
+. // numeric values
+. la def passfail 0 "Fail" 1 "Pass", modify
+
+. 
+. // Applies the passfail label to the values in the pred variable/column
+. la val pred passfail
+
+. 
+. // Creates a numeric teacher ID (needed because Mata does not include objects 
+. // that store text and numeric data in a single data frame like object
+. qui: g byte tchid = cond(inst1 == "A", 1, cond(inst1 == "B", 2, 3))
+
+. 
+. // Starts the Mata interpreter
+. mata:
+------------------------------------------------- mata (type end to exit) ----------------------------------------------------------
+: 
+:         // Creates the object named angoff by selecting all of the non-missing values
+:         // across the last three columns/variables in the data set (e.g., the item 
+:         // judgments from the three instructors)
+:         angoff = select(st_data(., (5..7)), rowmissing(st_data(., (5..7))) :== 0)
+
+:         
+:         // Defines a container object to store the individual instructor cutscores 
+:         // and the cutscore defined by averaging over these ratings
+:         cutscores = J(1, 4, .)
+
+:         
+:         // Loop over the values that identify individual instructors
+:         for( i = 1; i <= 3; i++) {
+>         
+>                 // Replace the corresponding columns in the cutscores matrix with the 
+>                 // sum of the item probabilities for each instructor
+>                 cutscores[1, i] = colsum(select(angoff[., 2], angoff[., 3] :== i))
+>                 
+>         } // End of Loop
+
+:         
+:         // Averages the sum of the item probabilities across the instructors
+:         cutscores[1, 4] = rowsum(cutscores[1, 1..3]) / 3
+
+:         
+:         // Creates a Stata matrix named cutscores that contains these values
+:         st_matrix("cutscores", cutscores)
+
+:         
+:         // Creates an object to store the ratings from rater # 1
+:         r1 = select(angoff[., (1..2)], angoff[., 3] :== 1)
+
+:         
+:         // Creates an object to store the ratings from rater # 2
+:         r2 = select(angoff[., (1..2)], angoff[., 3] :== 2)
+
+:         
+:         // Creates an object to store the ratings from rater # 3
+:         r3 = select(angoff[., (1..2)], angoff[., 3] :== 3)
+
+:         
+:         // Average item probability for instructor # 1
+:         mu1 = mean(r1[., 2])
+
+:         
+:         // Average item probability for instructor # 2
+:         mu2 = mean(r2[., 2])
+
+:         
+:         // Average item probability for instructor # 3
+:         mu3 = mean(r3[., 2])
+
+:         
+:         // Standard deviation of item probabilities for instructor # 1
+:         sigma1 = sqrt(variance(r1[., 2]))
+
+:         
+:         // Standard deviation of item probabilities for instructor # 2
+:         sigma2 = sqrt(variance(r2[., 2]))
+
+:         
+:         // Standard deviation of item probabilities for instructor # 3
+:         sigma3 = sqrt(variance(r3[., 2]))
+
+:         
+:         // Creates a container matrix to store the probabilities across columns
+:         items = J(3, 13, .)
+
+:         
+:         // Container to store the standard deviations of each item
+:         sigmaitems = J(1, 13, .)
+
+:         
+:         // Loops over the item indexes 
+:         for(i = 1; i <= 13; i++) {
+>         
+>                 // Populates the ith column in the 1st row (Instructor 1) with the 
+>                 // Probability of the ith item
+>                 items[1, i] = r1[i, 2]
+> 
+>                 // Populates the ith column in the 2nd row (Instructor 2) with the 
+>                 // Probability of the ith item
+>                 items[2, i] = r2[i, 2]
+> 
+>                 // Populates the ith column in the 3rd row (Instructor 3) with the 
+>                 // Probability of the ith item
+>                 items[3, i] = r3[i, 2]
+>                                 
+>         } // End of Loop
+
+:         
+:         // Gets the item averages across instructors 
+:         muitems = mean(items)
+
+: 
+:         // Loop over items again
+:         for(i = 1; i <= 13; i++) {
+>         
+>                 // Gets the standard deviation of item probabilities across instructors
+>                 sigmaitems[1, i] = sqrt(variance(items[., i]))
+> 
+>         } // End Loop to get the standard deviations across items       
+
+:         
+:         // Creates the item summary matrix by appending the transpose of the average
+:         // and standard deviations (e.g., from row to column vectors)
+:         itemsummary = (muitems', sigmaitems')
+
+:         
+:         // Builds the rater summary matrix with average and standard deviation of 
+:         // each rater in the same row
+:         ratersummary = (mu1, sigma1 \ mu2, sigma2 \ mu3, sigma3)
+
+: 
+:         // Creates a Stata matrix named items to store the item summary matrix
+:         st_matrix("items", itemsummary)
+
+:         
+:         // Creates a Stata matrix named raters to store the rater summary matrix
+:         st_matrix("raters", ratersummary)
+
+:         
+: // End Mata interpreter 
+: end
+------------------------------------------------------------------------------------------------------------------------------------
+
+. 
+. // Item stem for item # 1
+. loc istem1 "Simplify 9/15"
+
+. 
+. // Item stem for item # 2
+. loc istem2 "Multiply and Simplify 2/5 * 35"
+
+. 
+. // Item stem for item # 3
+. loc istem3 "Multiply and Simplify 3/10 * 43/100"
+
+. 
+. // Item stem for item # 4
+. loc istem4 "Divide and Simplify 7/2 `div' 49/4"
+
+. 
+. // Item stem for item # 5
+. loc istem5 "Divide and Simplify 7/4 `div' 7"
+
+. 
+. // Item stem for item # 6
+. loc istem6 "Add and Simplify 7/8 + 7/8"
+
+. 
+. // Item stem for item # 7
+. loc istem7 "Add and Simplify 7/9 + 5/6"
+
+. 
+. // Item stem for item # 8
+. loc istem8 "Subtract and Simplify 7/10 - 13/25"
+
+. 
+. // Item stem for item # 9
+. loc istem9 "Add (write the answer as a mixed numeral) 6 5/6 + 2 5/6"
+
+. 
+. // Item stem for item # 10
+. loc istem10 "Add 8 1/9 + 7 2/5"
+
+. 
+. // Item stem for item # 11
+. loc istem11 "Subtract 9 2/5 - 5 1/3"
+
+. 
+. // Item stem for item # 12
+. loc istem12 "Subtract (write a mixed numeral for the answer) 27 - 22 1/2"
+
+. 
+. // Item stem for item # 13
+. loc istem13 "Divide (write as mixed numeral) 12 `div' 1 1/13"
+
+. 
+. // Loops over item indices
+. forv i = 1/13 {
+  2. 
+.         // Contructs a macro containing the item stem and item ID 
+.         loc irownames `"`irownames' "Item `i' : `istem`i''""'
+  3.         //loc irownames `irownames' Item`i'
+. 
+. } // End of loop over item indices
+
+. 
+. // Column names for the item/rater summary matrices
+. loc colnms Mean "Std Dev"
+
+. 
+. // Row names for the item summary matrix
+. mat rownames items = `irownames'
+Subtract and Simplify 7/10 - 13/25 invalid name
+r(198);
+
+end of do-file
+
+r(198);
+
+. ascii
+33  ! 34  " 35  # 36  $ 37  % 38  & 39  ' 40  ( 41  ) 42  * 43  + 44  , 45  - 46  . 47  / 48  0 49  1 50  2 51  3 52  4 53  5 54  6
+55  7 56  8 57  9 58  : 59  ; 60  < 61  = 62  > 63  ? 64  @ 65  A 66  B 67  C 68  D 69  E 70  F 71  G 72  H 73  I 74  J 75  K 76  L
+77  M 78  N 79  O 80  P 81  Q 82  R 83  S 84  T 85  U 86  V 87  W 88  X 89  Y 90  Z 91  [ 92  \ 93  ] 94  ^ 95  _ 96  ` 97  a 98  b
+99  c 100 d 101 e 102 f 103 g 104 h 105 i 106 j 107 k 108 l 109 m 110 n 111 o 112 p 113 q 114 r 115 s 116 t 117 u 118 v 119 w 120 x
+121 y 122 z 123 { 124 | 125 } 126 ~ 127  128 € 129  130 ‚ 131 ƒ 132 „ 133 … 134 † 135 ‡ 136 ˆ 137 ‰ 138 Š 139 ‹ 140 Œ 141  142 Ž
+143  144  145 ‘ 146 ’ 147 “ 148 ” 149 • 150 – 151 — 152 ˜ 153 ™ 154 š 155 › 156 œ 157  158 ž 159 Ÿ 160   161 ¡ 162 ¢ 163 £ 164 ¤
+165 ¥ 166 ¦ 167 § 168 ¨ 169 © 170 ª 171 « 172 ¬ 173 ­ 174 ® 175 ¯ 176 ° 177 ± 178 ² 179 ³ 180 ´ 181 µ 182 ¶ 183 · 184 ¸ 185 ¹ 186 º
+187 » 188 ¼ 189 ½ 190 ¾ 191 ¿ 192 À 193 Á 194 Â 195 Ã 196 Ä 197 Å 198 Æ 199 Ç 200 È 201 É 202 Ê 203 Ë 204 Ì 205 Í 206 Î 207 Ï 208 Ð
+209 Ñ 210 Ò 211 Ó 212 Ô 213 Õ 214 Ö 215 × 216 Ø 217 Ù 218 Ú 219 Û 220 Ü 221 Ý 222 Þ 223 ß 224 à 225 á 226 â 227 ã 228 ä 229 å 230 æ
+231 ç 232 è 233 é 234 ê 235 ë 236 ì 237 í 238 î 239 ï 240 ð 241 ñ 242 ò 243 ó 244 ô 245 õ 246 ö 247 ÷ 248 ø 249 ù 250 ú 251 û 252 ü
+253 ý 254 þ 255 ÿ
+. di _char(45)
+-
+
+. di _char(47)
+/
+
+. di _char(43)
++
+
+. do "/var/folders/px/cg4_66j52pvfn2z7pbjvb5d80000gn/T//SD01075.000000"
+
+. // Stores division character from extended ascii range in a local macro
+. loc divdot `: di _char(247)'
+
+. 
+. // Store multiplication dot
+. loc multiply `: di _char(149)'
+
+. 
+. // Store addition operator
+. loc add `: di _char(43)'
+
+. 
+. // Store difference operator
+. loc sub `: di _char(45)'
+
+. 
+. // Store fraction/division operator
+. loc div `: di _char(47)'
+
+. 
+. // Loads the data set containing the predicted pass/fail indicator, observed
+. // scores, and item judgments
+. import excel using ../data/raw.xlsx, clear first case(l)
+
+. 
+. // Recodes the predicted pass/fail indicator with a numeric value
+. qui: replace porf = cond(porf == "P", "1", cond(porf == "F", "0", ""))
+
+. 
+. // Renames the variables from the original source
+. rename (inst1 studno studscor porf itemno itemjud)(inst1 stdid score pred        ///   
+> itemid itemdiff)
+
+. 
+. // Recasts the predicted pass/fail indicator as a numeric type
+. qui: destring pred, replace
+
+. 
+. // Defines a pass/fail value label (masking) that attributes the labels with the
+. // numeric values
+. la def passfail 0 "Fail" 1 "Pass", modify
+
+. 
+. // Applies the passfail label to the values in the pred variable/column
+. la val pred passfail
+
+. 
+. // Creates a numeric teacher ID (needed because Mata does not include objects 
+. // that store text and numeric data in a single data frame like object
+. qui: g byte tchid = cond(inst1 == "A", 1, cond(inst1 == "B", 2, 3))
+
+. 
+. // Starts the Mata interpreter
+. mata:
+------------------------------------------------- mata (type end to exit) ----------------------------------------------------------
+: 
+:         // Creates the object named angoff by selecting all of the non-missing values
+:         // across the last three columns/variables in the data set (e.g., the item 
+:         // judgments from the three instructors)
+:         angoff = select(st_data(., (5..7)), rowmissing(st_data(., (5..7))) :== 0)
+
+:         
+:         // Defines a container object to store the individual instructor cutscores 
+:         // and the cutscore defined by averaging over these ratings
+:         cutscores = J(1, 4, .)
+
+:         
+:         // Loop over the values that identify individual instructors
+:         for( i = 1; i <= 3; i++) {
+>         
+>                 // Replace the corresponding columns in the cutscores matrix with the 
+>                 // sum of the item probabilities for each instructor
+>                 cutscores[1, i] = colsum(select(angoff[., 2], angoff[., 3] :== i))
+>                 
+>         } // End of Loop
+
+:         
+:         // Averages the sum of the item probabilities across the instructors
+:         cutscores[1, 4] = rowsum(cutscores[1, 1..3]) / 3
+
+:         
+:         // Creates a Stata matrix named cutscores that contains these values
+:         st_matrix("cutscores", cutscores)
+
+:         
+:         // Creates an object to store the ratings from rater # 1
+:         r1 = select(angoff[., (1..2)], angoff[., 3] :== 1)
+
+:         
+:         // Creates an object to store the ratings from rater # 2
+:         r2 = select(angoff[., (1..2)], angoff[., 3] :== 2)
+
+:         
+:         // Creates an object to store the ratings from rater # 3
+:         r3 = select(angoff[., (1..2)], angoff[., 3] :== 3)
+
+:         
+:         // Average item probability for instructor # 1
+:         mu1 = mean(r1[., 2])
+
+:         
+:         // Average item probability for instructor # 2
+:         mu2 = mean(r2[., 2])
+
+:         
+:         // Average item probability for instructor # 3
+:         mu3 = mean(r3[., 2])
+
+:         
+:         // Standard deviation of item probabilities for instructor # 1
+:         sigma1 = sqrt(variance(r1[., 2]))
+
+:         
+:         // Standard deviation of item probabilities for instructor # 2
+:         sigma2 = sqrt(variance(r2[., 2]))
+
+:         
+:         // Standard deviation of item probabilities for instructor # 3
+:         sigma3 = sqrt(variance(r3[., 2]))
+
+:         
+:         // Creates a container matrix to store the probabilities across columns
+:         items = J(3, 13, .)
+
+:         
+:         // Container to store the standard deviations of each item
+:         sigmaitems = J(1, 13, .)
+
+:         
+:         // Loops over the item indexes 
+:         for(i = 1; i <= 13; i++) {
+>         
+>                 // Populates the ith column in the 1st row (Instructor 1) with the 
+>                 // Probability of the ith item
+>                 items[1, i] = r1[i, 2]
+> 
+>                 // Populates the ith column in the 2nd row (Instructor 2) with the 
+>                 // Probability of the ith item
+>                 items[2, i] = r2[i, 2]
+> 
+>                 // Populates the ith column in the 3rd row (Instructor 3) with the 
+>                 // Probability of the ith item
+>                 items[3, i] = r3[i, 2]
+>                                 
+>         } // End of Loop
+
+:         
+:         // Gets the item averages across instructors 
+:         muitems = mean(items)
+
+: 
+:         // Loop over items again
+:         for(i = 1; i <= 13; i++) {
+>         
+>                 // Gets the standard deviation of item probabilities across instructors
+>                 sigmaitems[1, i] = sqrt(variance(items[., i]))
+> 
+>         } // End Loop to get the standard deviations across items       
+
+:         
+:         // Creates the item summary matrix by appending the transpose of the average
+:         // and standard deviations (e.g., from row to column vectors)
+:         itemsummary = (muitems', sigmaitems')
+
+:         
+:         // Builds the rater summary matrix with average and standard deviation of 
+:         // each rater in the same row
+:         ratersummary = (mu1, sigma1 \ mu2, sigma2 \ mu3, sigma3)
+
+: 
+:         // Creates a Stata matrix named items to store the item summary matrix
+:         st_matrix("items", itemsummary)
+
+:         
+:         // Creates a Stata matrix named raters to store the rater summary matrix
+:         st_matrix("raters", ratersummary)
+
+:         
+: // End Mata interpreter 
+: end
+------------------------------------------------------------------------------------------------------------------------------------
+
+. 
+. // Item stem for item # 1
+. loc istem1 "Simplify 9`div'15"
+
+. 
+. // Item stem for item # 2
+. loc istem2 "Multiply and Simplify 2`div'5 `multiply' 35"
+
+. 
+. // Item stem for item # 3
+. loc istem3 "Multiply and Simplify 3`div'10 `multiply' 43`div'100"
+
+. 
+. // Item stem for item # 4
+. loc istem4 "Divide and Simplify 7`div'2 `divdot' 49`div'4"
+
+. 
+. // Item stem for item # 5
+. loc istem5 "Divide and Simplify 7`div'4 `divdot' 7"
+
+. 
+. // Item stem for item # 6
+. loc istem6 "Add and Simplify 7`div'8 `add' 7`div'8"
+
+. 
+. // Item stem for item # 7
+. loc istem7 "Add and Simplify 7`div'9 `add' 5`div'6"
+
+. 
+. // Item stem for item # 8
+. loc istem8 "Subtract and Simplify 7`div'10 `sub' 13`div'25"
+
+. 
+. // Item stem for item # 9
+. loc istem9 "Add (write the answer as a mixed numeral) 6 5`div'6 `add' 2 5`div'6"
+
+. 
+. // Item stem for item # 10
+. loc istem10 "Add 8 1`div'9 `add' 7 2`div'5"
+
+. 
+. // Item stem for item # 11
+. loc istem11 "Subtract 9 2`div'5 `sub' 5 1`div'3"
+
+. 
+. // Item stem for item # 12
+. loc istem12 "Subtract (write a mixed numeral for the answer) 27 `sub' 22 1`div'2"
+
+. 
+. // Item stem for item # 13
+. loc istem13 "Divide (write as mixed numeral) 12 `divdot' 1 1`div'13"
+
+. 
+. // Loops over item indices
+. forv i = 1/13 {
+  2. 
+.         // Contructs a macro containing the item stem and item ID 
+.         loc irownames `"`irownames' "Item `i' : `istem`i''""'
+  3.         //loc irownames `irownames' Item`i'
+. 
+. } // End of loop over item indices
+
+. 
+. // Column names for the item/rater summary matrices
+. loc colnms Mean "Std Dev"
+
+. 
+. // Row names for the item summary matrix
+. mat rownames items = `irownames'
+Multiply and Simplify 3/10  43/100 invalid name
+r(198);
+
+end of do-file
+
+r(198);
+
+. di _char(246)
+ö
+
+. di _char(245)
+õ
+
+. di _char(243)
+ó
+
+. di _char(247)
+÷
+
+. di _char(248)
+ø
+
+. di _char(249)
+ù
+
+. di _char(250)
+ú
+
+. di _char(251)
+û
+
+. di _char(252)
+ü
+
+. di _char(253)
+ý
+
+. di _char(254)
+þ
+
+. di _char(255)
+ÿ
+
+. forv i = 1/255 {
+  2. di `"_char(`i') == "' _char(`i')
+  3. }
+_char(1) == 
+_char(2) == 
+_char(3) == 
+_char(4) == 
+_char(5) == 
+_char(6) == 
+_char(7) == 
+_char(8) == 
+_char(9) ==     
+_char(10) == 
+
+_char(11) == 
+_char(12) == 
+_char(13) == 
+_char(14) == 
+_char(15) == 
+_char(16) == 
+_char(17) == 
+_char(18) == 
+_char(19) == 
+_char(20) == 
+_char(21) == 
+_char(22) == 
+_char(23) == 
+_char(24) == 
+_char(25) == 
+_char(26) == 
+_char(27) == 
+_char(28) == 
+_char(29) == 
+_char(30) == 
+_char(31) == 
+_char(32) ==  
+_char(33) == !
+_char(34) == "
+_char(35) == #
+_char(36) == $
+_char(37) == %
+_char(38) == &
+_char(39) == '
+_char(40) == (
+_char(41) == )
+_char(42) == *
+_char(43) == +
+_char(44) == ,
+_char(45) == -
+_char(46) == .
+_char(47) == /
+_char(48) == 0
+_char(49) == 1
+_char(50) == 2
+_char(51) == 3
+_char(52) == 4
+_char(53) == 5
+_char(54) == 6
+_char(55) == 7
+_char(56) == 8
+_char(57) == 9
+_char(58) == :
+_char(59) == ;
+_char(60) == <
+_char(61) == =
+_char(62) == >
+_char(63) == ?
+_char(64) == @
+_char(65) == A
+_char(66) == B
+_char(67) == C
+_char(68) == D
+_char(69) == E
+_char(70) == F
+_char(71) == G
+_char(72) == H
+_char(73) == I
+_char(74) == J
+_char(75) == K
+_char(76) == L
+_char(77) == M
+_char(78) == N
+_char(79) == O
+_char(80) == P
+_char(81) == Q
+_char(82) == R
+_char(83) == S
+_char(84) == T
+_char(85) == U
+_char(86) == V
+_char(87) == W
+_char(88) == X
+_char(89) == Y
+_char(90) == Z
+_char(91) == [
+_char(92) == \
+_char(93) == ]
+_char(94) == ^
+_char(95) == _
+_char(96) == `
+_char(97) == a
+_char(98) == b
+_char(99) == c
+_char(100) == d
+_char(101) == e
+_char(102) == f
+_char(103) == g
+_char(104) == h
+_char(105) == i
+_char(106) == j
+_char(107) == k
+_char(108) == l
+_char(109) == m
+_char(110) == n
+_char(111) == o
+_char(112) == p
+_char(113) == q
+_char(114) == r
+_char(115) == s
+_char(116) == t
+_char(117) == u
+_char(118) == v
+_char(119) == w
+_char(120) == x
+_char(121) == y
+_char(122) == z
+_char(123) == {
+_char(124) == |
+_char(125) == }
+_char(126) == ~
+_char(127) == 
+_char(128) == 
+_char(129) == 
+_char(130) == 
+_char(131) == 
+_char(132) == 
+_char(133) == 
+_char(134) == 
+_char(135) == 
+_char(136) == 
+_char(137) == 
+_char(138) == 
+_char(139) == 
+_char(140) == 
+_char(141) == 
+_char(142) == 
+_char(143) == 
+_char(144) == 
+_char(145) == 
+_char(146) == 
+_char(147) == 
+_char(148) == 
+_char(149) == 
+_char(150) == 
+_char(151) == 
+_char(152) == 
+_char(153) == 
+_char(154) == 
+_char(155) == 
+_char(156) == 
+_char(157) == 
+_char(158) == 
+_char(159) == 
+_char(160) ==  
+_char(161) == ¡
+_char(162) == ¢
+_char(163) == £
+_char(164) == ¤
+_char(165) == ¥
+_char(166) == ¦
+_char(167) == §
+_char(168) == ¨
+_char(169) == ©
+_char(170) == ª
+_char(171) == «
+_char(172) == ¬
+_char(173) == ­
+_char(174) == ®
+_char(175) == ¯
+_char(176) == °
+_char(177) == ±
+_char(178) == ²
+_char(179) == ³
+_char(180) == ´
+_char(181) == µ
+_char(182) == ¶
+_char(183) == ·
+_char(184) == ¸
+_char(185) == ¹
+_char(186) == º
+_char(187) == »
+_char(188) == ¼
+_char(189) == ½
+_char(190) == ¾
+_char(191) == ¿
+_char(192) == À
+_char(193) == Á
+_char(194) == Â
+_char(195) == Ã
+_char(196) == Ä
+_char(197) == Å
+_char(198) == Æ
+_char(199) == Ç
+_char(200) == È
+_char(201) == É
+_char(202) == Ê
+_char(203) == Ë
+_char(204) == Ì
+_char(205) == Í
+_char(206) == Î
+_char(207) == Ï
+_char(208) == Ð
+_char(209) == Ñ
+_char(210) == Ò
+_char(211) == Ó
+_char(212) == Ô
+_char(213) == Õ
+_char(214) == Ö
+_char(215) == ×
+_char(216) == Ø
+_char(217) == Ù
+_char(218) == Ú
+_char(219) == Û
+_char(220) == Ü
+_char(221) == Ý
+_char(222) == Þ
+_char(223) == ß
+_char(224) == à
+_char(225) == á
+_char(226) == â
+_char(227) == ã
+_char(228) == ä
+_char(229) == å
+_char(230) == æ
+_char(231) == ç
+_char(232) == è
+_char(233) == é
+_char(234) == ê
+_char(235) == ë
+_char(236) == ì
+_char(237) == í
+_char(238) == î
+_char(239) == ï
+_char(240) == ð
+_char(241) == ñ
+_char(242) == ò
+_char(243) == ó
+_char(244) == ô
+_char(245) == õ
+_char(246) == ö
+_char(247) == ÷
+_char(248) == ø
+_char(249) == ù
+_char(250) == ú
+_char(251) == û
+_char(252) == ü
+_char(253) == ý
+_char(254) == þ
+_char(255) == ÿ
+
+. do "/var/folders/px/cg4_66j52pvfn2z7pbjvb5d80000gn/T//SD01075.000000"
+
+. loc divdot `: di _char(247)'
+
+. 
+. // Store multiplication dot
+. loc multiply `: di _char(42)'
+
+. 
+. // Store addition operator
+. loc add `: di _char(43)'
+
+. 
+. // Store difference operator
+. loc sub `: di _char(45)'
+
+. 
+. // Store fraction/division operator
+. loc div `: di _char(47)'
+
+. 
+. // Loads the data set containing the predicted pass/fail indicator, observed
+. // scores, and item judgments
+. import excel using ../data/raw.xlsx, clear first case(l)
+
+. 
+. // Recodes the predicted pass/fail indicator with a numeric value
+. qui: replace porf = cond(porf == "P", "1", cond(porf == "F", "0", ""))
+
+. 
+. // Renames the variables from the original source
+. rename (inst1 studno studscor porf itemno itemjud)(inst1 stdid score pred        ///   
+> itemid itemdiff)
+
+. 
+. // Recasts the predicted pass/fail indicator as a numeric type
+. qui: destring pred, replace
+
+. 
+. // Defines a pass/fail value label (masking) that attributes the labels with the
+. // numeric values
+. la def passfail 0 "Fail" 1 "Pass", modify
+
+. 
+. // Applies the passfail label to the values in the pred variable/column
+. la val pred passfail
+
+. 
+. // Creates a numeric teacher ID (needed because Mata does not include objects 
+. // that store text and numeric data in a single data frame like object
+. qui: g byte tchid = cond(inst1 == "A", 1, cond(inst1 == "B", 2, 3))
+
+. 
+. // Starts the Mata interpreter
+. mata:
+------------------------------------------------- mata (type end to exit) ----------------------------------------------------------
+: 
+:         // Creates the object named angoff by selecting all of the non-missing values
+:         // across the last three columns/variables in the data set (e.g., the item 
+:         // judgments from the three instructors)
+:         angoff = select(st_data(., (5..7)), rowmissing(st_data(., (5..7))) :== 0)
+
+:         
+:         // Defines a container object to store the individual instructor cutscores 
+:         // and the cutscore defined by averaging over these ratings
+:         cutscores = J(1, 4, .)
+
+:         
+:         // Loop over the values that identify individual instructors
+:         for( i = 1; i <= 3; i++) {
+>         
+>                 // Replace the corresponding columns in the cutscores matrix with the 
+>                 // sum of the item probabilities for each instructor
+>                 cutscores[1, i] = colsum(select(angoff[., 2], angoff[., 3] :== i))
+>                 
+>         } // End of Loop
+
+:         
+:         // Averages the sum of the item probabilities across the instructors
+:         cutscores[1, 4] = rowsum(cutscores[1, 1..3]) / 3
+
+:         
+:         // Creates a Stata matrix named cutscores that contains these values
+:         st_matrix("cutscores", cutscores)
+
+:         
+:         // Creates an object to store the ratings from rater # 1
+:         r1 = select(angoff[., (1..2)], angoff[., 3] :== 1)
+
+:         
+:         // Creates an object to store the ratings from rater # 2
+:         r2 = select(angoff[., (1..2)], angoff[., 3] :== 2)
+
+:         
+:         // Creates an object to store the ratings from rater # 3
+:         r3 = select(angoff[., (1..2)], angoff[., 3] :== 3)
+
+:         
+:         // Average item probability for instructor # 1
+:         mu1 = mean(r1[., 2])
+
+:         
+:         // Average item probability for instructor # 2
+:         mu2 = mean(r2[., 2])
+
+:         
+:         // Average item probability for instructor # 3
+:         mu3 = mean(r3[., 2])
+
+:         
+:         // Standard deviation of item probabilities for instructor # 1
+:         sigma1 = sqrt(variance(r1[., 2]))
+
+:         
+:         // Standard deviation of item probabilities for instructor # 2
+:         sigma2 = sqrt(variance(r2[., 2]))
+
+:         
+:         // Standard deviation of item probabilities for instructor # 3
+:         sigma3 = sqrt(variance(r3[., 2]))
+
+:         
+:         // Creates a container matrix to store the probabilities across columns
+:         items = J(3, 13, .)
+
+:         
+:         // Container to store the standard deviations of each item
+:         sigmaitems = J(1, 13, .)
+
+:         
+:         // Loops over the item indexes 
+:         for(i = 1; i <= 13; i++) {
+>         
+>                 // Populates the ith column in the 1st row (Instructor 1) with the 
+>                 // Probability of the ith item
+>                 items[1, i] = r1[i, 2]
+> 
+>                 // Populates the ith column in the 2nd row (Instructor 2) with the 
+>                 // Probability of the ith item
+>                 items[2, i] = r2[i, 2]
+> 
+>                 // Populates the ith column in the 3rd row (Instructor 3) with the 
+>                 // Probability of the ith item
+>                 items[3, i] = r3[i, 2]
+>                                 
+>         } // End of Loop
+
+:         
+:         // Gets the item averages across instructors 
+:         muitems = mean(items)
+
+: 
+:         // Loop over items again
+:         for(i = 1; i <= 13; i++) {
+>         
+>                 // Gets the standard deviation of item probabilities across instructors
+>                 sigmaitems[1, i] = sqrt(variance(items[., i]))
+> 
+>         } // End Loop to get the standard deviations across items       
+
+:         
+:         // Creates the item summary matrix by appending the transpose of the average
+:         // and standard deviations (e.g., from row to column vectors)
+:         itemsummary = (muitems', sigmaitems')
+
+:         
+:         // Builds the rater summary matrix with average and standard deviation of 
+:         // each rater in the same row
+:         ratersummary = (mu1, sigma1 \ mu2, sigma2 \ mu3, sigma3)
+
+: 
+:         // Creates a Stata matrix named items to store the item summary matrix
+:         st_matrix("items", itemsummary)
+
+:         
+:         // Creates a Stata matrix named raters to store the rater summary matrix
+:         st_matrix("raters", ratersummary)
+
+:         
+: // End Mata interpreter 
+: end
+------------------------------------------------------------------------------------------------------------------------------------
+
+. 
+. // Item stem for item # 1
+. loc istem1 "Simplify 9`div'15"
+
+. 
+. // Item stem for item # 2
+. loc istem2 "Multiply and Simplify 2`div'5 `multiply' 35"
+
+. 
+. // Item stem for item # 3
+. loc istem3 "Multiply and Simplify 3`div'10 `multiply' 43`div'100"
+
+. 
+. // Item stem for item # 4
+. loc istem4 "Divide and Simplify 7`div'2 `divdot' 49`div'4"
+
+. 
+. // Item stem for item # 5
+. loc istem5 "Divide and Simplify 7`div'4 `divdot' 7"
+
+. 
+. // Item stem for item # 6
+. loc istem6 "Add and Simplify 7`div'8 `add' 7`div'8"
+
+. 
+. // Item stem for item # 7
+. loc istem7 "Add and Simplify 7`div'9 `add' 5`div'6"
+
+. 
+. // Item stem for item # 8
+. loc istem8 "Subtract and Simplify 7`div'10 `sub' 13`div'25"
+
+. 
+. // Item stem for item # 9
+. loc istem9 "Add (write the answer as a mixed numeral) 6 5`div'6 `add' 2 5`div'6"
+
+. 
+. // Item stem for item # 10
+. loc istem10 "Add 8 1`div'9 `add' 7 2`div'5"
+
+. 
+. // Item stem for item # 11
+. loc istem11 "Subtract 9 2`div'5 `sub' 5 1`div'3"
+
+. 
+. // Item stem for item # 12
+. loc istem12 "Subtract (write a mixed numeral for the answer) 27 `sub' 22 1`div'2"
+
+. 
+. // Item stem for item # 13
+. loc istem13 "Divide (write as mixed numeral) 12 `divdot' 1 1`div'13"
+
+. 
+. // Loops over item indices
+. forv i = 1/13 {
+  2. 
+.         // Contructs a macro containing the item stem and item ID 
+.         loc irownames `"`irownames' "Item `i' : `istem`i''""'
+  3.         //loc irownames `irownames' Item`i'
+. 
+. } // End of loop over item indices
+
+. 
+. // Column names for the item/rater summary matrices
+. loc colnms Mean "Std Dev"
+
+. 
+. // Row names for the item summary matrix
+. mat rownames items = `irownames'
+Subtract and Simplify 7/10 - 13/25 invalid name
+r(198);
+
+end of do-file
+
+r(198);
+
+. h estout
+
